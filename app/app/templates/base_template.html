@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Olá fernando</title>
+	<style>
+		:root{
+			--bg1:#0f172a; /* slate-900 */
+			--bg2:#0b1220;
+			--accent1:#7c3aed; /* purple */
+			--accent2:#06b6d4; /* teal */
+			--accent3:#f59e0b; /* amber */
+		}
+		html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
+		.wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;overflow:hidden}
+		h1{font-size:clamp(3rem,8vw,6rem);line-height:0.9;margin:0;text-align:center;background:linear-gradient(90deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent;animation:glow 3s ease-in-out infinite}
+		@keyframes glow{0%,100%{filter:drop-shadow(0 0 6px rgba(124,58,237,0.6))}50%{filter:drop-shadow(0 6px 18px rgba(6,182,212,0.25))}}
+		.subtitle{margin-top:.6rem;text-align:center;color:rgba(255,255,255,0.85);font-size:1.05rem}
+
+		/* moving decorative shapes */
+		.shape{position:absolute;border-radius:50%;opacity:.8;filter:blur(.4px)}
+		.s1{width:220px;height:220px;left:-60px;top:10%;background:radial-gradient(circle at 30% 30%, rgba(124,58,237,0.9), rgba(124,58,237,0.15));animation:float1 9s ease-in-out infinite}
+		.s2{width:140px;height:140px;right:-40px;top:5%;background:radial-gradient(circle at 70% 30%, rgba(6,182,212,0.9), rgba(6,182,212,0.12));animation:float2 11s ease-in-out infinite}
+		.s3{width:90px;height:90px;left:20%;bottom:-30px;background:radial-gradient(circle at 30% 70%, rgba(245,158,11,0.95), rgba(245,158,11,0.1));animation:float3 7s ease-in-out infinite}
+		.s4{width:50px;height:50px;right:18%;bottom:10%;background:linear-gradient(45deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04));animation:spin 12s linear infinite}
+
+		@keyframes float1{0%{transform:translateY(0) translateX(0) rotate(0deg)}50%{transform:translateY(-28px) translateX(22px) rotate(8deg)}100%{transform:translateY(0) translateX(0) rotate(0deg)}}
+		@keyframes float2{0%{transform:translateY(0) translateX(0)}50%{transform:translateY(36px) translateX(-24px)}100%{transform:translateY(0) translateX(0)}}
+		@keyframes float3{0%{transform:translateY(0)}50%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+		@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+		/* small responsive tweaks */
+		@media (max-width:600px){h1{font-size:3.2rem}.s1{display:none}}
+		/* small pulse CTA */
+		.note{position:fixed;left:16px;bottom:16px;background:rgba(0,0,0,0.35);padding:10px 12px;border-radius:8px;font-size:0.9rem;color:#fff}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="shape s1" aria-hidden="true"></div>
+		<div class="shape s2" aria-hidden="true"></div>
+		<div class="shape s3" aria-hidden="true"></div>
+		<div class="shape s4" aria-hidden="true"></div>
+
+		<div style="text-align:center;z-index:2">
+			<h1>Home page</h1>
+			<div class="subtitle">Bem-vindo à página inicial</div>
+		</div>
+
+	</div>
+
+	<script>
+		// Small touch: click anywhere to toggle a quick color shift
+		document.querySelector('.wrap').addEventListener('click',()=>{
+			document.documentElement.style.setProperty('--accent1', '#' + Math.floor(Math.random()*16777215).toString(16));
+			document.documentElement.style.setProperty('--accent2', '#' + Math.floor(Math.random()*16777215).toString(16));
+		});
+	</script>
+</body>
+</html>
