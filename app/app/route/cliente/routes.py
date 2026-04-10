@@ -1,12 +1,16 @@
 from flask import render_template, redirect, url_for, request, session, flash, Blueprint, jsonify, abort, send_from_directory, current_app
 from app import app
-
+from app.models import Cliente
 
 cliente_blp = Blueprint('cliente', __name__, url_prefix='/cliente')
 
 # Retornando a página de clientes
 @cliente_blp.route('/index.html')
 def index():
+    result = Cliente.query.all()
+    # Exemplo de listagem de clientes no console
+    for cliente in result:
+        print(cliente.Nome)
     return render_template('clientes/index.html')
 
 # Rota para listagem de clientes
