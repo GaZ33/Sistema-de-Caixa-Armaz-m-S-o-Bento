@@ -1,0 +1,20 @@
+{# Clientes #}
+{% extends 'base_template.html' %}
+
+{% block title %}
+    Clientes
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='clientes/style.css') }}" />
+{% endblock %}
+{% block content %}
+    <h1>Clientes</h1>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='clientes/script.js') }}"></script>
+    <script>
+        console.log("teste");
+    </script>
+{% endblock %}

@@ -28,6 +28,8 @@ db = SQLAlchemy(app)
 # Criptografia
 bcrypt = Bcrypt(app) 
 
-from app.route.home import home_bp
+from app.route.home.routes import home_bp
+from app.route.cliente.routes import cliente_blp
 app.register_blueprint(home_bp)
+app.register_blueprint(cliente_blp)
 
