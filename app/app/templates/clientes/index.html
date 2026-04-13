@@ -6,15 +6,89 @@
 {% endblock %}
 
 {% block styles %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='clientes/style.css') }}" />
 {% endblock %}
+
 {% block content %}
-    <h1>Clientes</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Clientes</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCliente">
+            + Novo Cliente
+        </button>
+    </div>
+
+    <table id="tabelaClientes" class="table table-striped table-hover w-100">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- Modal Criar/Editar Cliente -->
+<div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalClienteLabel">Novo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="clienteId" />
+                <div class="mb-3">
+                    <label for="inputNome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="inputNome" placeholder="Nome completo" />
+                </div>
+                <div class="mb-3">
+                    <label for="inputCPF" class="form-label">CPF</label>
+                    <input type="text" class="form-control" id="inputCPF" placeholder="000.000.000-00" maxlength="14" />
+                </div>
+                <div class="mb-3">
+                    <label for="inputTelefone" class="form-label">Telefone</label>
+                    <input type="text" class="form-control" id="inputTelefone" placeholder="(00) 00000-0000" maxlength="15" />
+                </div>
+                <div class="mb-3">
+                    <label for="inputEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="inputEmail" placeholder="email@exemplo.com" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarCliente">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmação de Delete -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir este cliente?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarDelete">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='clientes/script.js') }}"></script>
-    <script>
-        console.log("teste");
-    </script>
 {% endblock %}
