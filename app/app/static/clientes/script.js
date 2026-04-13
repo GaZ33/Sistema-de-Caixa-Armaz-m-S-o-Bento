@@ -1,11 +1,12 @@
 $(document).ready(function () {
 
     // ── Inicializa o DataTable ──────────────────────────────────────────────
-    const tabela = $('#tabelaClientes').DataTable({
+    const tabela = $('#tabelaclientes').DataTable({
+        lengthChange: false,
         ajax: {
             url: '/cliente/',
             type: 'GET',
-            dataSrc: 'clientes'         // campo do JSON que contém o array
+            dataSrc: 'clientes'
         },
         columns: [
             { data: 'IDCliente',  visible: false },
@@ -38,6 +39,9 @@ $(document).ready(function () {
         }
     });
 
+        document.getElementById("linhas").addEventListener("change", function () {
+        tabela.page.len(this.value).draw();
+    });
 
     // ── Abrir modal para CRIAR ──────────────────────────────────────────────
     $('[data-bs-target="#modalCliente"]').on('click', function () {
