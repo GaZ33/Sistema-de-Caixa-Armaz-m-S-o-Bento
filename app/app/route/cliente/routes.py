@@ -16,7 +16,13 @@ def index():
 # Rota para listagem de clientes
 @cliente_blp.route('/', methods=['GET'])
 def list_clientes():
-    return jsonify({"message": "Lista de clientes"}), 200
+    # Exemplo de listagem de clientes no console
+    result = Cliente.query.all()
+    result_json = [cliente.to_dict() for cliente in result]
+    for cliente in result:
+        print(cliente.Nome)
+    
+    return jsonify({"message": "Lista de clientes", "clientes": result_json}), 200
 
 # Rota para busca de cliente por ID
 @cliente_blp.route('/<int:id>', methods=['GET'])

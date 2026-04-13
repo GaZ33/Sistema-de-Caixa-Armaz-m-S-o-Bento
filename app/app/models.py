@@ -22,6 +22,15 @@ class Cliente(db.Model):
     enderecos = relationship('Endereco', back_populates='cliente')
     contas = relationship('Conta', back_populates='cliente')
 
+    def to_dict(self):
+        return {
+            "IDCliente": self.IDCliente,
+            "Nome": self.Nome,
+            "CPF": self.CPF,
+            "Telefone": self.Telefone,
+            "Email": self.Email
+        }
+
 # Modelo para Endereco
 class Endereco(db.Model):
     __tablename__ = 'Endereco'
