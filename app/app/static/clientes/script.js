@@ -8,7 +8,7 @@ $(document).ready(function () {
             dataSrc: 'clientes'         // campo do JSON que contém o array
         },
         columns: [
-            { data: 'IDCliente' },
+            { data: 'IDCliente',  visible: false },
             { data: 'Nome' },
             { data: 'CPF' },
             { data: 'Telefone', defaultContent: '-' },
