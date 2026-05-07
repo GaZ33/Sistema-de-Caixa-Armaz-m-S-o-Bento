@@ -1,100 +1,122 @@
-
-from sqlalchemy import Column, ForeignKeyConstraint, Integer, String, Date, DateTime, Enum, DECIMAL, ForeignKey, Index
-import sqlalchemy
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Enum, DECIMAL, Float, Text
 from sqlalchemy.orm import relationship
 from app import db
 
+class Perfil(db.Model):
+    __tablename__ = 'perfil'
 
-# Modelo para Usuarios
-class Usuarios(db.Model):
-    __tablename__ = 'Usuarios'
-    idUsuarios = Column(Integer, primary_key=True, autoincrement=True)
-    Nome = Column(String(45))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String(35), nullable=False, unique=True)
+    data_alteracao = Column(DateTime, nullable=True)
+    data_criacao = Column(DateTime, nullable=False)
 
-# Modelo para Cliente
-class Cliente(db.Model):
-    __tablename__ = 'Cliente'
-    IDCliente = Column(Integer, primary_key=True, autoincrement=True)
-    Nome = Column(String(45), nullable=False)
-    CPF = Column(String(14), nullable=False)
-    Telefone = Column(String(15))
-    Email = Column(String(100))
-    enderecos = relationship('Endereco', back_populates='cliente')
-    contas = relationship('Conta', back_populates='cliente')
+class Usuario(db.Model):
+    __tablename__ = 'usuario'
 
-# Modelo para Endereco
-class Endereco(db.Model):
-    __tablename__ = 'Endereco'
-    IDEndereco = Column(Integer, primary_key=True, autoincrement=True)
-    Rua = Column(String(100), nullable=False)
-    Bairro = Column(String(100), nullable=False)
-    Cidade = Column(String(100), nullable=False)
-    Estado = Column(String(50), nullable=False)
-    Cliente_IDCliente = Column(Integer, ForeignKey('Cliente.IDCliente'), nullable=False)
-    cliente = relationship('Cliente', back_populates='enderecos')
-    __table_args__ = (
-        Index('fk_Endereco_Cliente_idx', 'Cliente_IDCliente'),
-    )
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    perfil_id = Column(Integer, ForeignKey('perfil.id'), nullable=False)
+    nome = Column(String(20), nullable=False)
+    sobrenome = Column(String(45), nullable=True)
+    email = Column(String(85), nullable=True, unique=True)
+    cpf = Column(String(45), nullable=True, unique=True)
+    senha = Column(String(256), nullable=False)
+    salt = Column(String(124), nullable=False)
+    username = Column(String(25), nullable=False, unique=True)
+    data_criacao = Column(DateTime, nullable=True)
+    data_alteracao = Column(DateTime, nullable=True)
+    telefone = Column(String(15), nullable=True)
 
-# Modelo para Funcionario
-class Funcionario(db.Model):
-    __tablename__ = 'Funcionario'
-    IDFuncionario = Column(Integer, primary_key=True, autoincrement=True)
-    Nome = Column(String(45), nullable=False)
-    CPF = Column(String(14), nullable=False)
-    Login = Column(String(50), nullable=False)
-    Senha = Column(String(126), nullable=False)
-    contas = relationship('Conta', back_populates='funcionario')
-
-# Modelo para Conta
 class Conta(db.Model):
-    __tablename__ = 'Conta'
-    IDConta = Column(Integer, primary_key=True, autoincrement=True)
-    DataCriacao = Column(Date, nullable=False)
-    DataModificacao = Column(DateTime)
-    DataFechamento = Column(DateTime)
-    Status = Column(Enum('aberta', 'fechada'), nullable=False)
-    ValorTotal = Column(String(45), nullable=False)
-    Cliente_IDCliente = Column(Integer, ForeignKey('Cliente.IDCliente'), nullable=False)
-    Funcionario_IDFuncionario = Column(Integer, ForeignKey('Funcionario.IDFuncionario'), nullable=False)
-    cliente = relationship('Cliente', back_populates='contas')
-    funcionario = relationship('Funcionario', back_populates='contas')
-    produtos_conta = relationship('ProdutoConta', back_populates='conta')
-    __table_args__ = (
-        Index('fk_Conta_Cliente1_idx', 'Cliente_IDCliente'),
-        Index('fk_Conta_Funcionario1_idx', 'Funcionario_IDFuncionario'),
-    )
+    __tablename__ = 'conta'
 
-# Modelo para Produto
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    funcionario = Column(Integer, ForeignKey('usuario.id'), nullable=False)
+    cliente = Column(Integer, ForeignKey('usuario.id'), nullable=True)
+    data_criacao = Column(DateTime, nullable=False)
+    data_alteracao = Column(DateTime, nullable=True)
+    data_fechamento = Column(DateTime, nullable=True)
+    status = Column(Enum("aberta", "fechada"), nullable=False)
+    valor_total = Column(DECIMAL, nullable=False)
+
+class LogPagamento(db.Model):
+    __tablename__ = 'logPagamento'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    forma_pagamento = Column(Enum("dinheiro", "cartao_credito", "cartao_debito", "pix"), nullable=True)
+    valor_pago = Column(DECIMAL, nullable=False)
+    data_pagamento = Column(DateTime, nullable=True)
+    conta_id = Column(Integer, ForeignKey('conta.id'), nullable=False)
+
+class LogAlteracoes(db.Model):
+    __tablename__ = 'logAlteracoes'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    usuario_id = Column(Integer, ForeignKey('usuario.id'), nullable=False)
+    tabela_afetada = Column(String(45), nullable=True)
+    acao = Column(Enum("insert", "update", "delete"), nullable=False)
+    valor_antigo = Column(Text, nullable=True)
+    valor_novo = Column(Text, nullable=True)
+    data_evento = Column(DateTime, nullable=False)
+
 class Produto(db.Model):
-    __tablename__ = 'Produto'
-    IDProduto = Column(Integer, primary_key=True, autoincrement=True)
-    Nome = Column(String(45), nullable=False)
-    Marca = Column(String(45), nullable=False)
-    Quantidade = Column(Integer, nullable=False)
-    Preco = Column(DECIMAL(10, 2), nullable=False)
-    LimiteMnimo = Column(Integer, nullable=False)
-    produtos_conta = relationship('ProdutoConta', back_populates='produto')
+    __tablename__ = 'produto'
 
-# Modelo para ProdutoConta
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String(45), nullable=False)
+    preco_unidade = Column(DECIMAL, nullable=False)
+    unidade = Column(Enum("pacote", "unidade", "kg", "ml"), nullable=False)
+
 class ProdutoConta(db.Model):
-    __tablename__ = 'ProdutoConta'
-    IDProdutoConta = Column(Integer, primary_key=True, autoincrement=True)
-    Quantidade = Column(Integer, nullable=False)
-    PrecoUnitario = Column(DECIMAL(10, 2), nullable=False)
-    Subtotal = Column(DECIMAL(10, 2), nullable=False)
-    Conta_IDConta = Column(Integer, nullable=False)
-    Conta_Funcionario_IDFuncionario = Column(Integer, nullable=False)
-    Produto_IDProduto = Column(Integer, ForeignKey('Produto.IDProduto'), nullable=False)
-    __table_args__ = (
-        Index('fk_ProdutoConta_Conta1_idx', 'Conta_IDConta', 'Conta_Funcionario_IDFuncionario'),
-        Index('fk_ProdutoConta_Produto1_idx', 'Produto_IDProduto'),
-        sqlalchemy.ForeignKeyConstraint(
-            ['Conta_IDConta', 'Conta_Funcionario_IDFuncionario'],
-            ['Conta.IDConta', 'Conta.Funcionario_IDFuncionario'],
-            name='fk_ProdutoConta_Conta1',
-        ),
-    )
-    conta = relationship('Conta', back_populates='produtos_conta',
-                        primaryjoin="and_(ProdutoConta.Conta_IDConta==Conta.IDConta, ProdutoConta.Conta_Funcionario_IDFuncionario==Conta.Funcionario_IDFuncionario)")
-    produto = relationship('Produto', back_populates='produtos_conta')
+    __tablename__ = 'produtoConta'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    conta_id = Column(Integer, ForeignKey('conta.id'), nullable=False)
+    produto_id = Column(Integer, ForeignKey('produto.id'), nullable=False)
+    quantidade = Column(Float, nullable=False)
+    preco_unitario = Column(DECIMAL, nullable=False)
+    subtotal = Column(DECIMAL, nullable=False)
+
+class Estoque(db.Model):
+    __tablename__ = 'estoque'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    produto_id = Column(Integer, ForeignKey('produto.id'), nullable=False)
+    quantidade_atual = Column(Float, nullable=False)
+    quantidade_minima = Column(Float, nullable=True)
+    data_alteracao = Column(DateTime, nullable=True)
+
+class LogEstoque(db.Model):
+    __tablename__ = 'logEstoque'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    estoque_id = Column(Integer, ForeignKey('estoque.id'), nullable=False)
+    movimentacao = Column(Enum("entrada", "saida"), nullable=True)
+    quantidade = Column(Float, nullable=True)
+    motivo = Column(Enum("venda", "reposicao", "perda"), nullable=True)
+
+class AvisosEstoque(db.Model):
+    __tablename__ = 'avisosEstoque'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    estoque_id = Column(Integer, ForeignKey('estoque.id'), nullable=False)
+    descricao = Column(Text, nullable=True)
+    status = Column(Enum("pendente", "visualizado", "resolvido"), nullable=True)
+
+class Modulo(db.Model):
+    __tablename__ = 'modulo'
+
+    idmodulo = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String(25), nullable=False, unique=True)
+    codigo = Column(String(4), nullable=False, unique=True)
+
+class PerfilAcessos(db.Model):
+    __tablename__ = 'perfilAcessos'
+    alterar = Column(Boolean, nullable=True)
+    excluir = Column(Boolean, nullable=True)
+    inserir = Column(Boolean, nullable=True)
+    ler = Column(Boolean, nullable=True)
+
+    idperfilAcessos = Column(Integer, primary_key=True, autoincrement=True)
+    modulo_idmodulo = Column(Integer, ForeignKey('modulo.idmodulo'), nullable=False)
+    perfil_id = Column(Integer, ForeignKey('perfil.id'), nullable=False)
+
