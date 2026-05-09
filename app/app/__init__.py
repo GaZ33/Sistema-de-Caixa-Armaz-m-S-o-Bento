@@ -28,8 +28,21 @@ db = SQLAlchemy(app)
 # Criptografia
 bcrypt = Bcrypt(app) 
 
-from app.route.home.routes import home_bp
-from app.route.cliente.routes import cliente_blp
-app.register_blueprint(home_bp)
-app.register_blueprint(cliente_blp)
+
+from app.app.web.pages_controller import pages_blueprint
+from app.app.web.user_controller import create_user_controller
+from app.app.services.user_service import UserService
+from app.app.repositories.user_repository import UserRepository
+
+# Instanciar o repositório e o serviço
+user_repository = UserRepository()  # Substitua pela implementação concreta
+user_service = UserService(user_repository)
+
+# Registrar o blueprint
+user_blueprint = create_user_controller(user_service) # Criar o blueprint para as rotas de usuário
+app.register_blueprint(user_blueprint, url_prefix='/api') # Registrar o blueprint para as rotas de usuário
+app.register_blueprint(pages_blueprint) # Registrar o blueprint para renderização de páginas
+
+
+
 
