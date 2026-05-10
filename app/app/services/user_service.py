@@ -1,6 +1,6 @@
-from app.app.repositories.user_repository import UserRepository
-from app.app.domain.user import User
-from app.app.core.exceptions import NotFoundException
+from app.repositories.user_repository import UserRepository
+from app.domain.user import User
+from app.core.exceptions import NotFoundException
 
 class UserService:
     def __init__(self, repository: UserRepository):
