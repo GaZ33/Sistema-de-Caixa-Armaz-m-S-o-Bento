@@ -65,6 +65,8 @@ class Produto(db.Model):
     nome = Column(String(45), nullable=False)
     preco_unidade = Column(DECIMAL, nullable=False)
     unidade = Column(Enum("pacote", "unidade", "kg", "ml"), nullable=False)
+    codigo = Column(String(25), nullable=False, unique=True)
+    marca = Column(String(45), nullable=False)
 
 class ProdutoConta(db.Model):
     __tablename__ = 'produtoConta'
