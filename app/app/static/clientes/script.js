@@ -52,7 +52,7 @@ $(document).ready(function () {
 
 
     // ── Abrir modal para EDITAR ─────────────────────────────────────────────
-    $('#tabelaClientes').on('click', '.btn-editar', function () {
+    $('#tabelaclientes').on('click', '.btn-editar', function () {
         const btn = $(this);
         $('#modalClienteLabel').text('Editar Cliente');
         $('#clienteId').val(btn.data('id'));
@@ -99,7 +99,7 @@ $(document).ready(function () {
     // ── Confirmar DELETE ────────────────────────────────────────────────────
     let idParaDeletar = null;
 
-    $('#tabelaClientes').on('click', '.btn-deletar', function () {
+    $('#tabelaclientes').on('click', '.btn-deletar', function () {
         idParaDeletar = $(this).data('id');
         new bootstrap.Modal('#modalDelete').show();
     });

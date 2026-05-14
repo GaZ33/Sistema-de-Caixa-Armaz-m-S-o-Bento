@@ -5,13 +5,13 @@ from app.models import Cliente
 cliente_blp = Blueprint('cliente', __name__, url_prefix='/cliente')
 
 
-# Retornando a página de clientes
+# Retornar a pagina de cliente
 @cliente_blp.route('/index.html')
 def index():
     return render_template('clientes/index.html')
 
 
-# Rota para listagem de clientes
+# Listar Cliente ROta
 @cliente_blp.route('/', methods=['GET'])
 def list_clientes():
     clientes = Cliente.query.all()
@@ -21,14 +21,14 @@ def list_clientes():
     }), 200
 
 
-# Rota para busca de cliente por ID
+# Ver Cliente por ID Rota
 @cliente_blp.route('/<int:id>', methods=['GET'])
 def get_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     return jsonify(cliente.to_dict()), 200
 
 
-# Rota para criação de cliente
+# Criar Cliente Rota
 @cliente_blp.route('/', methods=['POST'])
 def create():
     data = request.get_json()
@@ -52,7 +52,7 @@ def create():
     }), 201
 
 
-# Rota para atualização de cliente
+# Atualizar cliente rota
 @cliente_blp.route('/<int:id>', methods=['PUT'])
 def update(id):
     cliente = Cliente.query.get_or_404(id)
