@@ -15,12 +15,32 @@ def create_produto_controller(service: ProdutoService):
     @produto_blueprint.route('/produtos', methods=['GET'])
     def get_produtos():
         produtos = service.get_all_produtos()
-        return jsonify([produto for produto in produtos])
+        produtos_serializados = [
+            {
+                'id': produto.id,
+                'nome': produto.nome,
+                'preco_unidade': float(produto.preco_unidade),
+                'quantidade': 0,
+                'unidade': produto.unidade,
+                'codigo': produto.codigo,
+                'marca': produto.marca
+            }
+            for produto in produtos
+        ]
+        return jsonify(produtos_serializados)
 
     @produto_blueprint.route('/produtos/<int:produto_id>', methods=['GET'])
     def get_produto(produto_id):
         produto = service.get_produto_by_id(produto_id)
-        return jsonify(produto)
+        produto_serializado = {
+            'id': produto.id,
+            'nome': produto.nome,
+            'preco_unidade': float(produto.preco_unidade),
+            'unidade': produto.unidade, 
+            'codigo': produto.codigo,
+            'marca': produto.marca
+        }
+        return jsonify(produto_serializado)
 
     @produto_blueprint.route('/produtos/<int:produto_id>', methods=['PUT'])
     def update_produto(produto_id):
@@ -39,19 +59,17 @@ def create_produto_controller(service: ProdutoService):
         query = request.args.get('query', '')
         produtos = service.buscar_produtos(query)
 
-        # Serializa os objetos Produto em dicionários
         produtos_serializados = [
             {
                 'id': produto.id,
                 'nome': produto.nome,
                 'preco_unidade': float(produto.preco_unidade),
-                'unidade': produto.unidade,
                 'codigo': produto.codigo,
+                'unidade': produto.unidade,
                 'marca': produto.marca
             }
             for produto in produtos
         ]
-        print(produtos_serializados)  # Adicione esta linha para verificar os dados serializados
         return jsonify(produtos_serializados)
 
     return produto_blueprint
