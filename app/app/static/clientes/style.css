@@ -1,0 +1,96 @@
+.titulo-cliente {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #3a2a00;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.client-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.client-card {
+    background-color: #fff8dc;
+    border: 1.5px solid #d9a800;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    gap: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    transition: box-shadow 0.15s;
+}
+
+.client-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.client-info {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+}
+
+.client-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #3a2a00;
+    grid-column: 1;
+}
+
+.client-cpf {
+    font-size: 14px;
+    color: #5a4000;
+    grid-column: 1;
+}
+
+.client-date {
+    font-size: 14px;
+    color: #5a4000;
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.client-value {
+    font-size: 14px;
+    color: #5a4000;
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.client-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    background: #ffe680;
+}
+
+.action-btn img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}

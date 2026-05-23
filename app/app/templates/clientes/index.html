@@ -1,20 +1,51 @@
 {# Clientes #}
 {% extends 'base_template.html' %}
-
-{% block title %}
-    Clientes
-{% endblock %}
+{% block title %}Lista de Clientes{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='clientes/style.css') }}" />
 {% endblock %}
+
 {% block content %}
-    <h1>Clientes</h1>
+<div class="app-wrapper">
+    <div class="main-area">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <a href="/" class="topbar-btn">
+                <img src="/static/icones/Home.png" alt="Home">
+                Home
+            </a>
+            <a href="/clientes/index.html" class="topbar-btn">
+                <img src="/static/icones/Clientes.png" alt="Clientes">
+                Clientes
+            </a>
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
+                Cadastrar Cliente
+            </a>
+            <a href="/produtos/index.html" class="topbar-btn active">
+                <img src="/static/icones/Produto.png" alt="Produtos">
+                Estoque
+            </a>
+            <div class="topbar-spacer"></div>
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Login.png" alt="Perfil">
+                Perfil
+            </a>
+        </header>
+
+        <main class="page-content">
+            <h2 class="titulo-cliente">LISTA DE CLIENTES</h2>
+            <div class="client-list" id="client-list">
+                <!-- cards gerados pelo JS -->
+            </div>
+        </main>
+
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='clientes/script.js') }}"></script>
-    <script>
-        console.log("teste");
-    </script>
 {% endblock %}

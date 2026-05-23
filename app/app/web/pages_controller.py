@@ -18,3 +18,6 @@ def ponto_de_venda():
 def produtos():
     return render_template('produto/index.html')
 
+@pages_blueprint.route('/clientes/index.html')
+def clientes():
+    return render_template('clientes/index.html')
