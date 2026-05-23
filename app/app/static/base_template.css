@@ -71,11 +71,10 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.sidebar-btn svg,
 .sidebar-btn img {
-    width: 32px;
-    height: 32px;
-}
+    width: 36px;
+    height: 36px;
+    object-fit: contain;}
 
 .sidebar-spacer {
     flex: 1;
@@ -92,7 +91,7 @@ body {
 
 /* Menu Superior */
 .topbar {
-    height: 68px;
+    height: 75px;
     background-color: #f0b800;
     border-bottom: 2px solid #d9a800;
     display: flex;
@@ -108,15 +107,15 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 68px;
-    height: 52px;
+    width: 70px;
+    height: 70px;
     background-color: #fff8dc;
     border: 2px solid #c9a000;
     border-radius: 10px;
     cursor: pointer;
     text-decoration: none;
     color: #3a2a00;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     text-align: center;
     gap: 3px;
@@ -126,13 +125,14 @@ body {
 }
 
 .topbar-btn:hover {
-    background-color: #ffe680;
+    background-color: #ffea97;
     box-shadow: 0 2px 8px rgba(0,0,0,0.13);
 }
 
-.topbar-btn svg {
-    width: 26px;
-    height: 26px;
+.topbar-btn img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
 }
 
 /* Miolo da Página*/
@@ -166,9 +166,20 @@ body {
 }
 
 .empty-title {
-    font-size: 22px;
+    font-size: 40px;
     font-weight: 600;
     color: #3a2a00;
     text-align: center;
     line-height: 1.5;
+}
+
+.topbar-spacer {
+    flex: 1;
+}
+
+/*Gatinho*/
+.empty-state img {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
 }

@@ -6,43 +6,36 @@
 {% block content %}
 <div class="app-wrapper">
 
-    <!-- Barra Lateral -->
-    <nav class="sidebar">
-        <a href="#" class="sidebar-btn active">
-			<img src="/static/icones/Clientes.png" alt="Clientes">
-            CLIENTES
-        </a>
-        <a href="/produtos" class="sidebar-btn">
-            <img src="/static/icones/Produto.png" alt="Produtos">
-            PRODUTOS/ ESTOQUE
-        </a>
-        <div class="sidebar-spacer"></div>
-        <a href="#" class="sidebar-btn">
-            <img src="/static/icones/Login.png" alt="Perfil">
-            PERFIL
-        </a>
-    </nav>
-
     <!-- Área principal -->
     <div class="main-area">
 
         <!-- Topbar -->
         <header class="topbar">
             <a href="#" class="topbar-btn">
+                <img src="/static/icones/Clientes.png" alt="Clientes">
+                CLIENTES
+            </a>
+            <a href="#" class="topbar-btn">
                 <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
                 CADASTRAR CLIENTE
             </a>
             <a href="#" class="topbar-btn">
-                <img src="/static/icones/ProcurarProduto.png" alt="Pesquisar Produto">
-                PESQUISAR PRODUTO
+                <img src="/static/icones/Produto.png" alt="Estoque">
+                ESTOQUE
             </a>	
+        <div class="topbar-spacer"></div> <!-- Cria espaço para perfil ficar na direita -->
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Login.png" alt="Perfil">
+                PERFIL
+            </a>
         </header>
 
-	<main class="page-content home-empty">
-		<div class="empty-state">
-			<p class="empty-title">Nenhuma Operação<br>em Andamento</p>
-		</div>
-	</main>
+<main class="page-content home-empty">
+    <div class="empty-state">
+        <img src="/static/icones/Gato.png" alt="Nenhuma operação">
+        <p class="empty-title">Nenhuma Operação<br>em Andamento</p>
+    </div>
+</main>
 
     </div>
 </div>
