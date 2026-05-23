@@ -125,13 +125,13 @@ body {
 }
 
 .topbar-btn:hover {
-    background-color: #ffea97;
+    background-color: #ffe680;
     box-shadow: 0 2px 8px rgba(0,0,0,0.13);
 }
 
 .topbar-btn img {
     width: 40px;
-    height: 40px;
+    height: 35px;
     object-fit: contain;
 }
 

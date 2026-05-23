@@ -1,79 +1,69 @@
 {% extends 'base_template.html' %}
-
-{% block title %}Gestão de Produtos{% endblock %}
+{% block title %}Produtos / Estoque{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="/static/produto/style.css">
 {% endblock %}
 
 {% block content %}
-<header>
-    <h1>Gestão de Produtos</h1>
-</header>
-<main>
-    <button id="add-product-button">Adicionar Produto</button>
+<div class="app-wrapper">
+    <div class="main-area">
 
-    <!-- Modal para Adicionar/Editar Produto -->
-    <div id="product-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="modal-title">Adicionar Produto</h2>
-            <form id="form-product">
-                <input type="hidden" id="product-id">
-                <div>
-                    <label for="product-name">Nome:</label>
-                    <input type="text" id="product-name" required>
+        <!-- Topbar -->
+        <header class="topbar">
+            <a href="/" class="topbar-btn">
+                <img src="/static/icones/Home.png" alt="Home">
+                Home
+            </a>
+            <a href="/" class="topbar-btn">
+                <img src="/static/icones/Clientes.png" alt="Clientes">
+                Cliente
+            </a>
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
+                Cadastrar Cliente
+            </a>
+            <a href="/produtos/index.html" class="topbar-btn active">
+                <img src="/static/icones/Produto.png" alt="Produtos">
+                Estoque
+            </a>
+            <div class="topbar-spacer"></div>
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Login.png" alt="Perfil">
+                Perfil
+            </a>
+        </header>
+
+        <!-- Conteúdo -->
+        <main class="page-content">
+            <h2 class="section-title">LISTA DOS PRODUTOS</h2>
+
+            <div class="product-list" id="product-list">
+                <!-- Exemplo de card — será gerado dinamicamente pelo JS -->
+                <div class="product-card">
+                    <div class="product-img-placeholder">
+                        <img src="/static/icones/Produto.png" alt="Produto">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-name">Nome: Feijão Carioca</span>
+                        <span class="product-detail">Preço: R$ 87,65</span>
+                        <span class="product-detail">Marca: Zorzo</span>
+                        <span class="product-detail">Quantidade: 6 Uni</span>
+                    </div>
+                    <div class="product-actions">
+                        <button class="action-btn" title="Editar">
+                            <img src="/static/icones/EditarSimbolo.png" alt="Editar">
+                        </button>
+                        <button class="action-btn" title="Excluir">
+                            <img src="/static/icones/Lixosimbolo.png" alt="Excluir">
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label for="product-price">Preço:</label>
-                    <input type="number" id="product-price" step="0.01" required>
-                </div>
-                <div>
-                    <label for="product-unit">Unidade:</label>
-                    <select id="product-unit" required>
-                        <option value="">Selecione</option>
-                        <option value="pacote">Pacote</option>
-                        <option value="unidade">Unidade</option>
-                        <option value="kg">Kg</option>
-                        <option value="ml">Ml</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="product-code">Código:</label>
-                    <input type="text" id="product-code" required>
-                </div>
-                <div>
-                    <label for="product-brand">Marca:</label>
-                    <input type="text" id="product-brand" required>
-                </div>
-                <button type="submit">Salvar</button>
-                <button type="button" id="delete-product-button" style="display: none;">Excluir</button>
-            </form>
-        </div>
+            </div>
+        </main>
+
     </div>
-
-    <!-- Tabela de Produtos -->
-    <section id="product-list">
-        <h2>Lista de Produtos</h2>
-        <table id="product-table" class="display">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Preço</th>
-                    <th>Unidade</th>
-                    <th>Código</th>
-                    <th>Marca</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Produtos serão carregados aqui dinamicamente -->
-            </tbody>
-        </table>
-    </section>
-</main>
-
+</div>
 {% endblock %}
 
 {% block scripts %}
