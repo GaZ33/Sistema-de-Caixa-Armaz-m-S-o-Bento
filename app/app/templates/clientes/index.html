@@ -1,4 +1,3 @@
-{# Clientes #}
 {% extends 'base_template.html' %}
 {% block title %}Lista de Clientes{% endblock %}
 
@@ -9,14 +8,12 @@
 {% block content %}
 <div class="app-wrapper">
     <div class="main-area">
-
-        <!-- Topbar -->
         <header class="topbar">
             <a href="/" class="topbar-btn">
                 <img src="/static/icones/Home.png" alt="Home">
                 Home
             </a>
-            <a href="/clientes/index.html" class="topbar-btn">
+            <a href="/clientes/index.html" class="topbar-btn active">
                 <img src="/static/icones/Clientes.png" alt="Clientes">
                 Clientes
             </a>
@@ -24,20 +21,29 @@
                 <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
                 Cadastrar Cliente
             </a>
-            <a href="/produtos/index.html" class="topbar-btn active">
+            <a href="/produtos/index.html" class="topbar-btn">
                 <img src="/static/icones/Produto.png" alt="Produtos">
                 Estoque
             </a>
             <div class="topbar-spacer"></div>
-            <a href="#" class="topbar-btn">
-                <img src="/static/icones/Login.png" alt="Perfil">
-                Perfil
-            </a>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+                <button type="submit" class="topbar-btn topbar-action">
+                    <img src="/static/icones/Desligar.png" alt="Sair">
+                    Sair
+                </button>
+            </form>
         </header>
 
-        <main class="page-content">
-            <h2 class="titulo-cliente">LISTA DE CLIENTES</h2>
-            <div class="client-list" id="client-list">
+        <main class="page-content clientes-page">
+            <section class="clientes-toolbar">
+                <div>
+                    <h2 class="titulo-cliente">Lista de Clientes</h2>
+                    <p class="section-subtitle">Tela conectada com o endpoint /api/users.</p>
+                </div>
+                <input id="client-search" class="product-search" type="search" placeholder="Buscar por nome, usuario ou email">
+            </section>
+
+            <div id="client-list" class="client-list">
                 <!-- cards gerados pelo JS -->
             </div>
         </main>
@@ -47,5 +53,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='clientes/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='clientes/script.js') }}" defer></script>
 {% endblock %}

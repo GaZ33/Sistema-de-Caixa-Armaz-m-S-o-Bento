@@ -135,6 +135,11 @@ body {
     object-fit: contain;
 }
 
+.topbar-action {
+    border: none;
+    font: inherit;
+}
+
 /* Miolo da Página*/
 .page-content {
     flex: 1;
@@ -182,4 +187,93 @@ body {
     width: 300px;
     height: 300px;
     object-fit: contain;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #f9cf58 0%, #f0b800 100%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: #fff8dc;
+    border: 2px solid #c9a000;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.login-card h1 {
+    font-size: 28px;
+    color: #3a2a00;
+    margin-bottom: 8px;
+}
+
+.login-card p {
+    color: #5c4400;
+    margin-bottom: 16px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-form label {
+    font-size: 14px;
+    color: #3a2a00;
+    font-weight: 600;
+}
+
+.login-form input {
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid #d9a800;
+    padding: 0 12px;
+    font-size: 14px;
+}
+
+.login-form button {
+    margin-top: 8px;
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid #a07800;
+    background-color: #f0b800;
+    color: #3a2a00;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: #ffd700;
+}
+
+.login-alert {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.login-alert.error {
+    background: #ffe5e5;
+    border: 1px solid #f59a9a;
+    color: #7a1515;
+}
+
+.login-alert.info {
+    background: #e7f0ff;
+    border: 1px solid #bfd0f2;
+    color: #284a84;
+}
+
+.topbar-action {
+    border: none;
+    font: inherit;
 }

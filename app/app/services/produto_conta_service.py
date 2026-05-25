@@ -11,8 +11,8 @@ class ProdutoContaService:
     def get_produto_conta_by_id(self, produto_conta_id):
         return self.repository.get_by_id(produto_conta_id)
 
-    def update_produto_conta(self, produto_conta):
-        return self.repository.update(produto_conta)
+    def update_produto_conta(self, produto_conta_id, data):
+        return self.repository.update(produto_conta_id, data)
 
     def delete_produto_conta(self, produto_conta_id):
         self.repository.delete(produto_conta_id)

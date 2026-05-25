@@ -17,7 +17,7 @@ class SQLAlchemyProdutoRepository:
         return Produto.query.all()
 
     def get_by_id(self, produto_id):
-        return Produto.query.get(produto_id)
+        return db.session.get(Produto, produto_id)
 
     def update(self, produto_id, data):
         produto = self.get_by_id(produto_id)
