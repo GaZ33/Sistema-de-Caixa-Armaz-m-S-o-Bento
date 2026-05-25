@@ -11,8 +11,8 @@ class ModuloService:
     def get_modulo_by_id(self, modulo_id):
         return self.repository.get_by_id(modulo_id)
 
-    def update_modulo(self, modulo):
-        return self.repository.update(modulo)
+    def update_modulo(self, modulo_id, data):
+        return self.repository.update(modulo_id, data)
 
     def delete_modulo(self, modulo_id):
         self.repository.delete(modulo_id)

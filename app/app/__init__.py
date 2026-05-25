@@ -1,7 +1,11 @@
 from flask import Flask
+from flask.json.provider import DefaultJSONProvider
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from dotenv import load_dotenv
+from datetime import date, datetime
+from decimal import Decimal
 import os
 # Todo: adicionar outras extensões conforme a implementação do projeto
 # Bcrypt para hashing de senhas, Flask-Login para gerenciamento de sessões, etc.
@@ -13,23 +17,51 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
+class AppJSONProvider(DefaultJSONProvider):
+	def default(self, obj):
+		if isinstance(obj, Decimal):
+			return float(obj)
+
+		if isinstance(obj, (datetime, date)):
+			return obj.isoformat()
+
+		if hasattr(obj, '__table__'):
+			return {column.name: getattr(obj, column.name) for column in obj.__table__.columns}
+
+		return super().default(obj)
+
+
+app.json = AppJSONProvider(app)
+
 # Configurações do aplicativo
-db_connection = os.getenv("DB_CONNECTION")
+db_connection = os.getenv("DB_CONNECTION_TEST") or os.getenv("DB_CONNECTION")
+print("Usando DB_CONNECTION:", db_connection)
 secret_key = os.getenv("SECRET_KEY")
+
+if not db_connection:
+	raise RuntimeError("DB_CONNECTION nao definida no arquivo .env")
 
 # Configurações do Flask
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = secret_key
+app.config["SECRET_KEY"] = secret_key or "dev-secret-key"
 app.config["SQLALCHEMY_DATABASE_URI"] = db_connection
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 # Inicializando as extensões
 db = SQLAlchemy(app)
 
 # Criptografia
 bcrypt = Bcrypt(app) 
+login_manager = LoginManager(app)
+login_manager.login_view = 'auth.login_page'
+login_manager.login_message = 'Faca login para continuar.'
+login_manager.login_message_category = 'error'
 
 
 from app.web.pages_controller import pages_blueprint
+from app.web.auth_controller import create_auth_controller
 from app.web.user_controller import create_user_controller
 from app.services.user_service import UserService
 from app.web.conta_controller import create_conta_controller
@@ -49,6 +81,7 @@ from app.services.log_estoque_service import LogEstoqueService
 from app.web.avisos_estoque_controller import create_avisos_estoque_controller
 from app.services.avisos_estoque_service import AvisosEstoqueService
 from app.web.modulo_controller import create_modulo_controller
+from app.web.venda_controller import venda_blueprint
 from app.services.modulo_service import ModuloService
 from app.web.perfil_acessos_controller import create_perfil_acessos_controller
 from app.services.perfil_acessos_service import PerfilAcessosService
@@ -63,6 +96,14 @@ from app.repositories.log_estoque_repository import SQLAlchemyLogEstoqueReposito
 from app.repositories.avisos_estoque_repository import SQLAlchemyAvisosEstoqueRepository
 from app.repositories.modulo_repository import SQLAlchemyModuloRepository
 from app.repositories.perfil_acessos_repository import SQLAlchemyPerfilAcessosRepository
+from app.models import Usuario
+
+
+@login_manager.user_loader
+def load_user(user_id: str):
+	if not user_id:
+		return None
+	return db.session.get(Usuario, int(user_id))
 
 # Substituir UserRepository pela implementação concreta SQLAlchemyUserRepository
 user_repository = SQLAlchemyUserRepository()  # Substitua pela implementação concreta
@@ -112,6 +153,8 @@ perfil_acessos_service = PerfilAcessosService(perfil_acessos_repository)
 user_blueprint = create_user_controller(user_service) # Criar o blueprint para as rotas de usuário
 app.register_blueprint(user_blueprint, url_prefix='/api') # Registrar o blueprint para as rotas de usuário
 app.register_blueprint(pages_blueprint) # Registrar o blueprint para renderização de páginas
+auth_blueprint = create_auth_controller(user_service)
+app.register_blueprint(auth_blueprint)
 
 # Registrar o blueprint de Conta
 conta_blueprint = create_conta_controller(conta_service)
@@ -152,6 +195,7 @@ app.register_blueprint(modulo_blueprint, url_prefix='/api')
 # Registrar o blueprint de PerfilAcessos
 perfil_acessos_blueprint = create_perfil_acessos_controller(perfil_acessos_service)
 app.register_blueprint(perfil_acessos_blueprint, url_prefix='/api')
+app.register_blueprint(venda_blueprint, url_prefix='/api')
 
 
 
