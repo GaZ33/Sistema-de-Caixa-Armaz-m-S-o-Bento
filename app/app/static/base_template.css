@@ -285,6 +285,70 @@ body {
 .xmodal:hover {
     color: #3a0000;
 }
+
+/* Modal Nova Conta */
+.modal-grande {
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box-grande {
+    max-width: 700px;
+    width: 95%;
+}
+
+.conta-tabela-wrapper {
+    width: 100%;
+    overflow-y: auto;
+    max-height: 340px;
+    border-radius: 10px;
+    border: 1.5px solid #d9a800;
+}
+
+.conta-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.conta-tabela thead tr {
+    background-color: #f0b800;
+}
+
+.conta-tabela th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: #3a2a00;
+}
+
+.conta-tabela tbody tr {
+    border-bottom: 1px solid #e8d080;
+}
+
+.conta-tabela tbody tr:nth-child(even) {
+    background-color: #fffbe8;
+}
+
+.conta-tabela td {
+    padding: 10px 12px;
+    color: #3a2a00;
+}
+
+.conta-total {
+    text-align: right;
+    font-size: 32px;
+    font-weight: 800;
+    color: #3a2a00;
+    padding: 12px 8px 4px;
+}
+
+.conta-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
 /*CSS das Páginas Individuais*/
 
 /* Página Inicial */

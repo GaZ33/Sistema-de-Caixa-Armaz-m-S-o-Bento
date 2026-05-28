@@ -16,7 +16,7 @@
             HOME
         </a>
         <div class="nav-sub">
-            <a href="#" class="topbar-btn">
+            <a onclick="abrirModal('modal-nova-conta')" class="topbar-btn" style="cursor:pointer;">
                 <img src="/static/icones/Adicionar.png" alt="Nova Conta">
                 NOVA CONTA
             </a>
@@ -46,4 +46,49 @@
 
     </div>
 </div>
+<!-- Modal Nova Conta -->
+<div class="modal-overlay modal-grande" id="modal-nova-conta" onclick="fecharModal('modal-nova-conta')">
+    <div class="modal-box modal-box-grande" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-nova-conta')">✕</button>
+        <h2 class="modal-title">NOVA CONTA</h2>
+
+        <div class="conta-tabela-wrapper">
+            <table class="conta-tabela">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Marca</th>
+                        <th>Quant.</th>
+                        <th>Preço Unit.</th>
+                        <th>Sub Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="conta-itens">
+                    <!-- itens carregados pelo JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="conta-total">
+            Total: <span id="conta-valor-total">0,00</span>
+        </div>
+
+        <div class="conta-acoes">
+            <button class="topbar-btn" onclick="adicionarACliente()">
+                <img src="/static/icones/Clientes.png" alt="Adicionar a Cliente">
+                ADICIONAR A CLIENTE
+            </button>
+            <button class="topbar-btn" onclick="cancelarConta()">
+                <img src="/static/icones/não.png" alt="Cancelar Conta">
+                CANCELAR CONTA
+            </button>
+            <button class="topbar-btn" onclick="finalizarConta()">
+                <img src="/static/icones/Sim.png" alt="Finalizar Conta">
+                FINALIZAR CONTA
+            </button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
