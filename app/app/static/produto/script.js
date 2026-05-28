@@ -187,16 +187,26 @@ function limparFormulario() {
     document.getElementById("product-brand").value = "";
 }
 
-// Função para abrir o modal
-function abrirModal(titulo) {
-    const modal = document.getElementById("product-modal");
-    document.getElementById("modal-title").textContent = titulo;
-    modal.style.display = "block";
+// Modal
+function abrirModal(id) {
+    document.getElementById(id).classList.add('aberto');
 }
 
-// Função para fechar o modal
-function fecharModal() {
-    const modal = document.getElementById("product-modal");
-    modal.style.display = "none";
-    limparFormulario();
+function fecharModal(id) {
+    document.getElementById(id).classList.remove('aberto');
+}
+
+function cadastrarProduto() {
+    const dados = {
+        nome: document.getElementById('cad-prod-nome').value,
+        marca: document.getElementById('cad-prod-marca').value,
+        quantidade: document.getElementById('cad-prod-quantidade').value,
+        quantidade_min: document.getElementById('cad-prod-quantidade-min').value,
+        preco: document.getElementById('cad-prod-preco').value,
+    };
+
+    console.log("Cadastrar produto:", dados);
+    // quando ligar ao backend: fetch('/api/produtos', { method: 'POST', body: JSON.stringify(dados) })
+
+    fecharModal('modal-cadastrar-produto');
 }
