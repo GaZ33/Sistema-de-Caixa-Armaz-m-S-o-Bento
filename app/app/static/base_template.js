@@ -69,3 +69,43 @@ function finalizarConta() {
     // será implementado ao ligar ao backend
     console.log('Finalizar conta');
 }
+
+let produtoSelecionado = null;
+
+function buscarProdutoNaConta() {
+    const query = document.getElementById('busca-produto').value;
+    if (query.length < 2) {
+        document.getElementById('resultado-busca').innerHTML = '';
+        return;
+    }
+
+    fetch(`/api/produtos/buscar?query=${encodeURIComponent(query)}`)
+        .then(r => r.json())
+        .then(produtos => {
+            const div = document.getElementById('resultado-busca');
+            div.innerHTML = '';
+            produtos.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = 'topbar-btn';
+                btn.style = 'width:100%; flex-direction:row; justify-content:flex-start; gap:8px; height:auto; padding:8px;';
+                btn.textContent = `${p.nome} — ${p.marca} — R$ ${p.preco_unidade.toFixed(2)}`;
+                btn.onclick = () => selecionarProduto(p, btn);
+                div.appendChild(btn);
+            });
+        });
+}
+
+function selecionarProduto(produto, btn) {
+    produtoSelecionado = produto;
+    document.querySelectorAll('#resultado-busca button').forEach(b => b.style.background = '');
+    btn.style.background = '#ffd700';
+}
+
+function confirmarAdicionarProduto() {
+    if (!produtoSelecionado) return alert('Selecione um produto.');
+    const quantidade = parseFloat(document.getElementById('quantidade-produto').value);
+    console.log('Adicionar:', produtoSelecionado, 'Qtd:', quantidade);
+    // quando ligar ao backend: fetch('/api/produto_conta', { method: 'POST', ... })
+    fecharModal('modal-adicionar-produto');
+    produtoSelecionado = null;
+}

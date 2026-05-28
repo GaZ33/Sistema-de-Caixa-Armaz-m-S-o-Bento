@@ -28,7 +28,7 @@
     </a>
     <a href="/produtos/index.html" class="topbar-btn">
         <img src="/static/icones/Produto.png" alt="Produtos">
-        PRODUTOS
+        ESTOQUE
     </a>
         <div class="topbar-spacer"></div>
     <a href="#" class="topbar-btn">
@@ -75,6 +75,10 @@
         </div>
 
         <div class="conta-acoes">
+    <button class="topbar-btn" onclick="abrirModal('modal-adicionar-produto')">
+        <img src="/static/icones/Produto.png" alt="Adicionar Produto">
+        ADICIONAR PRODUTO
+    </button>
             <button class="topbar-btn" onclick="adicionarACliente()">
                 <img src="/static/icones/Clientes.png" alt="Adicionar a Cliente">
                 ADICIONAR A CLIENTE
@@ -88,6 +92,25 @@
                 FINALIZAR CONTA
             </button>
         </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Produto à Conta -->
+<div class="modal-overlay" id="modal-adicionar-produto" onclick="fecharModal('modal-adicionar-produto')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-adicionar-produto')">✕</button>
+        <img src="/static/icones/Produto.png" alt="Produto" class="modal-icon">
+        <h2 class="modal-title">ADICIONAR PRODUTO</h2>
+
+        <label>Nome do Produto</label>
+        <input type="text" id="busca-produto" placeholder="Digite para buscar..." oninput="buscarProdutoNaConta()">
+
+        <div id="resultado-busca" style="display:flex; flex-direction:column; gap:3px;"></div>
+
+        <label style="margin-top:12px;">Quantidade</label>
+        <input type="number" id="quantidade-produto" value="1" min="1">
+
+        <button class="modal-btn" onclick="confirmarAdicionarProduto()">Adicionar</button>
     </div>
 </div>
 
