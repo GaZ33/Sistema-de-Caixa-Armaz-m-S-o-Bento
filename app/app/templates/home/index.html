@@ -10,28 +10,32 @@
 
         <!-- Menu Superior -->
         <header class="topbar">
-            <a href="/" class="topbar-btn">
-                <img src="/static/icones/Home.png" alt="Home">
-                Home
-            </a>
-            <a href="/clientes/index.html" class="topbar-btn">
-                <img src="/static/icones/Clientes.png" alt="Clientes">
-                Clientes
-            </a>
+    <div class="nav-group">
+        <a href="/" class="topbar-btn active">
+            <img src="/static/icones/Home.png" alt="Home">
+            HOME
+        </a>
+        <div class="nav-sub">
             <a href="#" class="topbar-btn">
-                <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
-                Cadastrar Cliente
+                <img src="/static/icones/Adicionar.png" alt="Nova Conta">
+                NOVA CONTA
             </a>
-            <a href="/produtos/index.html" class="topbar-btn">
-                <img src="/static/icones/Produto.png" alt="Estoque">
-                Estoque
-            </a>	
-        <div class="topbar-spacer"></div> <!-- Cria espaço para perfil ficar na direita -->
-            <a href="#" class="topbar-btn">
-                <img src="/static/icones/Login.png" alt="Perfil">
-            Perfil
-            </a>
-        </header>
+        </div>
+    </div>
+    <a href="/clientes/index.html" class="topbar-btn">
+        <img src="/static/icones/Clientes.png" alt="Clientes">
+        CLIENTES
+    </a>
+    <a href="/produtos/index.html" class="topbar-btn">
+        <img src="/static/icones/Produto.png" alt="Produtos">
+        PRODUTOS
+    </a>
+        <div class="topbar-spacer"></div>
+    <a href="#" class="topbar-btn">
+        <img src="/static/icones/Login.png" alt="Perfil">
+        PERFIL
+    </a>
+</header>
 
 <main class="page-content home-empty">
     <div class="empty-state">

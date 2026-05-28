@@ -135,6 +135,44 @@ body {
     object-fit: contain;
 }
 
+.topbar-btn.active,
+.topbar-btn.active:hover {
+    background-color: #ffe680;
+    border-color: #a07800;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+}
+
+/* Menu Superior Hover */
+.nav-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.nav-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.nav-sub {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width 0.35s ease, opacity 0.25s ease, margin-left 0.35s ease;
+    margin-left: 0;
+}
+
+.nav-group:hover .nav-sub {
+    max-width: 600px;
+    opacity: 1;
+    margin-left: 10px;
+}
+
+
 /* Miolo da Página*/
 .page-content {
     flex: 1;
@@ -183,3 +221,4 @@ body {
     height: 300px;
     object-fit: contain;
 }
+

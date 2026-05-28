@@ -10,28 +10,36 @@
 <div class="app-wrapper">
     <div class="main-area">
 
-        <!-- Topbar -->
+        <!-- Menu Superior -->
         <header class="topbar">
             <a href="/" class="topbar-btn">
                 <img src="/static/icones/Home.png" alt="Home">
-                Home
+                HOME
             </a>
-            <a href="/clientes/index.html" class="topbar-btn">
-                <img src="/static/icones/Clientes.png" alt="Clientes">
-                Clientes
-            </a>
-            <a href="#" class="topbar-btn">
-                <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
-                Cadastrar Cliente
-            </a>
-            <a href="/produtos/index.html" class="topbar-btn active">
+            <div class="nav-group">
+                <a href="/clientes/index.html" class="topbar-btn active">
+                    <img src="/static/icones/Clientes.png" alt="Clientes">
+                    CLIENTES
+                </a>
+                <div class="nav-sub">
+                    <a onclick="abrirModal('modal-cadastrar')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
+                        CADASTRAR CLIENTE
+                    </a>
+                    <a href="#" class="topbar-btn">
+                        <img src="/static/icones/ProcurarCadastro.png" alt="Procurar Cadastro">
+                        PROCURAR CADASTRO
+                    </a>
+                </div>
+            </div>
+            <a href="/produtos/index.html" class="topbar-btn">
                 <img src="/static/icones/Produto.png" alt="Produtos">
-                Estoque
+                PRODUTOS
             </a>
             <div class="topbar-spacer"></div>
             <a href="#" class="topbar-btn">
                 <img src="/static/icones/Login.png" alt="Perfil">
-                Perfil
+                PERFIL
             </a>
         </header>
 
@@ -59,6 +67,31 @@
 
     </div>
 </div>
+
+<div class="modal-overlay" id="modal-cadastrar" onclick="fecharModal('modal-cadastrar')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
+        <h2 class="modal-title">CADASTRAR CLIENTE</h2>
+
+        <label>Nome Completo</label>
+        <input type="text" id="cad-nome" placeholder="">
+
+        <label>CPF</label>
+        <input type="text" id="cad-cpf" placeholder="">
+
+        <label>Telefone</label>
+        <input type="text" id="cad-telefone" placeholder="">
+
+        <label>Email</label>
+        <input type="email" id="cad-email" placeholder="">
+
+        <label>Endereço</label>
+        <input type="text" id="cad-endereco" placeholder="">
+
+        <button class="modal-btn" onclick="cadastrarCliente()">Enviar</button>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
