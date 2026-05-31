@@ -11,7 +11,7 @@
         <header class="topbar">
             <a href="/" class="topbar-btn">
                 <img src="/static/icones/Home.png" alt="Home">
-                Home
+                HOME
             </a>
             <a href="/clientes/index.html" class="topbar-btn">
                 <img src="/static/icones/Clientes.png" alt="Clientes">
@@ -25,6 +25,22 @@
                 <img src="/static/icones/Produto.png" alt="Produtos">
                 Estoque
             </a>
+            <div class="nav-group">
+                <a href="/produtos/index.html" class="topbar-btn active">
+                    <img src="/static/icones/Produto.png" alt="Produtos">
+                    ESTOQUE
+                </a>
+                <div class="nav-sub">
+                <a onclick="abrirModal('modal-cadastrar-produto')" class="topbar-btn" style="cursor:pointer;">
+                    <img src="/static/icones/Adicionar.png" alt="Cadastrar Produto">
+                    CADASTRAR PRODUTO
+                </a>
+                    <a href="#" class="topbar-btn">
+                        <img src="/static/icones/ProcurarProduto.png" alt="Procurar Produto">
+                        PROCURAR PRODUTO
+                    </a>
+                </div>
+            </div>
             <div class="topbar-spacer"></div>
             <form method="post" action="{{ url_for('auth.logout') }}">
                 <button type="submit" class="topbar-btn topbar-action">
@@ -98,6 +114,42 @@
         </main>
     </div>
 </div>
+
+<!-- Modal Cadastrar Produto -->
+<div class="modal-overlay" id="modal-cadastrar-produto" onclick="fecharModal('modal-cadastrar-produto')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-cadastrar-produto')">✕</button>
+        <img src="/static/icones/Produto.png" alt="Produto" class="modal-icon">
+        <h2 class="modal-title">CADASTRAR PRODUTO</h2>
+
+        <label>Nome</label>
+        <input type="text" id="cad-prod-nome" placeholder="">
+
+        <label>Marca</label>
+        <input type="text" id="cad-prod-marca" placeholder="">
+
+        <div style="display:flex; gap:16px;">
+            <div style="flex:1;">
+                <label>Quantidade</label>
+                <input type="number" id="cad-prod-quantidade" placeholder="">
+            </div>
+            <div style="flex:1;">
+                <label>Quantidade Mín</label>
+                <input type="number" id="cad-prod-quantidade-min" placeholder="">
+            </div>
+        </div>
+
+        <div style="display:flex; gap:16px;">
+            <div style="flex:1;">
+                <label>Preço</label>
+                <input type="number" id="cad-prod-preco" placeholder="">
+            </div>
+        </div>
+
+        <button class="modal-btn" onclick="cadastrarProduto()">Enviar</button>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

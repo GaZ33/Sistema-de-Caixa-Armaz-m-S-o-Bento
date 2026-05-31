@@ -11,7 +11,7 @@
         <header class="topbar">
             <a href="/" class="topbar-btn">
                 <img src="/static/icones/Home.png" alt="Home">
-                Home
+                HOME
             </a>
             <a href="/clientes/index.html" class="topbar-btn active">
                 <img src="/static/icones/Clientes.png" alt="Clientes">
@@ -23,7 +23,7 @@
             </a>
             <a href="/produtos/index.html" class="topbar-btn">
                 <img src="/static/icones/Produto.png" alt="Produtos">
-                Estoque
+                ESTOQUE
             </a>
             <div class="topbar-spacer"></div>
             <form method="post" action="{{ url_for('auth.logout') }}">
@@ -50,6 +50,32 @@
 
     </div>
 </div>
+
+<div class="modal-overlay" id="modal-cadastrar" onclick="fecharModal('modal-cadastrar')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="xmodal" onclick="fecharModal('modal-cadastrar')">✕</button>
+        <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
+        <h2 class="modal-title">CADASTRAR CLIENTE</h2>
+
+        <label>Nome Completo</label>
+        <input type="text" id="cad-nome" placeholder="">
+
+        <label>CPF</label>
+        <input type="text" id="cad-cpf" placeholder="">
+
+        <label>Telefone</label>
+        <input type="text" id="cad-telefone" placeholder="">
+
+        <label>Email</label>
+        <input type="email" id="cad-email" placeholder="">
+
+        <label>Endereço</label>
+        <input type="text" id="cad-endereco" placeholder="">
+
+        <button class="modal-btn" onclick="cadastrarCliente()">Enviar</button>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

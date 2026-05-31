@@ -159,6 +159,41 @@ document.addEventListener('DOMContentLoaded', () => {
             setFeedback(error.message, 'error');
         }
     };
+}
+
+// Função para limpar o formulário
+function limparFormulario() {
+    document.getElementById("product-id").value = "";
+    document.getElementById("product-name").value = "";
+    document.getElementById("product-price").value = "";
+    document.getElementById("product-quantity").value = "";
+    document.getElementById("product-unit").value = "";
+    document.getElementById("product-brand").value = "";
+}
+
+// Modal
+function abrirModal(id) {
+    document.getElementById(id).classList.add('aberto');
+}
+
+function fecharModal(id) {
+    document.getElementById(id).classList.remove('aberto');
+}
+
+function cadastrarProduto() {
+    const dados = {
+        nome: document.getElementById('cad-prod-nome').value,
+        marca: document.getElementById('cad-prod-marca').value,
+        quantidade: document.getElementById('cad-prod-quantidade').value,
+        quantidade_min: document.getElementById('cad-prod-quantidade-min').value,
+        preco: document.getElementById('cad-prod-preco').value,
+    };
+
+    console.log("Cadastrar produto:", dados);
+    // quando ligar ao backend: fetch('/api/produtos', { method: 'POST', body: JSON.stringify(dados) })
+
+    fecharModal('modal-cadastrar-produto');
+}
 
     productList.addEventListener('click', async (event) => {
         const actionButton = event.target.closest('button[data-action]');
