@@ -123,6 +123,9 @@
                 FINALIZAR CONTA
             </button>
         </div>
+        <div class="conta-cliente-info">
+            <span id="cliente-selecionado-label" style="font-size:0.9rem; color:#555;"></span>
+        </div>
     </div>
 </div>
 
@@ -142,6 +145,33 @@
         <input type="number" id="quantidade-produto" value="1" min="1">
 
         <button class="modal-btn" onclick="confirmarAdicionarProduto()">Adicionar</button>
+    </div>
+</div>
+
+<!-- Modal Selecionar Cliente -->
+<div class="modal-overlay" id="modal-selecionar-cliente" onclick="fecharModal('modal-selecionar-cliente')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-selecionar-cliente')">✕</button>
+        <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
+        <h2 class="modal-title">SELECIONAR CLIENTE</h2>
+        <input type="search" id="busca-cliente-modal" placeholder="Buscar por nome ou usuário..."
+               oninput="filtrarClientesModal()" style="width:100%; margin-bottom:10px;">
+        <div id="resultado-clientes"
+             style="display:flex; flex-direction:column; gap:3px; max-height:240px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- Modal Forma de Pagamento -->
+<div class="modal-overlay" id="modal-pagamento" onclick="fecharModal('modal-pagamento')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-pagamento')">✕</button>
+        <h2 class="modal-title">FORMA DE PAGAMENTO</h2>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+            <button class="modal-btn" onclick="confirmarPagamento('dinheiro')">Dinheiro</button>
+            <button class="modal-btn" onclick="confirmarPagamento('cartao_credito')">Cartão de Crédito</button>
+            <button class="modal-btn" onclick="confirmarPagamento('cartao_debito')">Cartão de Débito</button>
+            <button class="modal-btn" onclick="confirmarPagamento('pix')">PIX</button>
+        </div>
     </div>
 </div>
 

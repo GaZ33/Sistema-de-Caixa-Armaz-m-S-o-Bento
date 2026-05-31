@@ -1,112 +1,196 @@
-$(document).ready(function() {
+﻿$(document).ready(function () {
 
 });
 
 function abrirModal(id) {
-    document.getElementById(id).classList.add('aberto');
+    $('#' + id).addClass('aberto');
 }
 
 function fecharModal(id) {
-    document.getElementById(id).classList.remove('aberto');
+    $('#' + id).removeClass('aberto');
 }
 
-// Nova Conta
-function abrirNovaConta() {
-    carregarItensConta();
-    abrirModal('modal-nova-conta');
-}
+/* ==================== NOVA CONTA (Home) ==================== */
 
-function carregarItensConta() {
-    fetch('/api/produto_conta')
-        .then(r => r.json())
-        .then(itens => renderizarItensConta(itens))
-        .catch(e => console.error('Erro ao carregar itens:', e));
-}
+var carrinhoLocal = [];
+var clienteSelecionadoId = null;
 
-function renderizarItensConta(itens) {
-    const tbody = document.getElementById('conta-itens');
-    tbody.innerHTML = '';
-    let total = 0;
+function renderizarItensConta() {
+    var $tbody = $('#conta-itens');
+    if (!$tbody.length) return;
+    $tbody.empty();
+    var total = 0;
 
-    itens.forEach(item => {
+    $.each(carrinhoLocal, function (index, item) {
         total += item.subtotal;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.produto_id}</td>
-            <td>—</td>
-            <td>${item.quantidade}</td>
-            <td>R$ ${item.preco_unitario.toFixed(2)}</td>
-            <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td>
-                <button class="action-btn" onclick="removerItemConta(${item.id})">
-                    <img src="/static/icones/Lixosimbolo.png" alt="Remover">
-                </button>
-            </td>
-        `;
-        tbody.appendChild(tr);
+        $tbody.append(
+            '<tr>' +
+                '<td>' + item.nome + '</td>' +
+                '<td>' + item.marca + '</td>' +
+                '<td>' + item.quantidade + '</td>' +
+                '<td>R$ ' + item.preco_unitario.toFixed(2) + '</td>' +
+                '<td>R$ ' + item.subtotal.toFixed(2) + '</td>' +
+                '<td><button class="action-btn" onclick="removerItemConta(' + index + ')">' +
+                    '<img src="/static/icones/Lixosimbolo.png" alt="Remover"></button></td>' +
+            '</tr>'
+        );
     });
 
-    document.getElementById('conta-valor-total').textContent = total.toFixed(2).replace('.', ',');
+    $('#conta-valor-total').text(total.toFixed(2).replace('.', ','));
 }
 
-function removerItemConta(id) {
-    fetch(`/api/produto_conta/${id}`, { method: 'DELETE' })
-        .then(() => carregarItensConta())
-        .catch(e => console.error('Erro ao remover item:', e));
+function removerItemConta(index) {
+    carrinhoLocal.splice(index, 1);
+    renderizarItensConta();
 }
 
 function adicionarACliente() {
-    // será implementado ao ligar ao backend
-    console.log('Adicionar a cliente');
+    carregarClientesModal();
+    abrirModal('modal-selecionar-cliente');
 }
 
 function cancelarConta() {
     if (!confirm('Deseja cancelar a conta?')) return;
+    carrinhoLocal = [];
+    clienteSelecionadoId = null;
+    $('#cliente-selecionado-label').text('');
     fecharModal('modal-nova-conta');
 }
 
 function finalizarConta() {
-    // será implementado ao ligar ao backend
-    console.log('Finalizar conta');
+    if (!carrinhoLocal.length) {
+        alert('Adicione pelo menos um produto antes de finalizar.');
+        return;
+    }
+    abrirModal('modal-pagamento');
 }
 
-let produtoSelecionado = null;
+function confirmarPagamento(formaPagamento) {
+    var carrinho = $.map(carrinhoLocal, function (item) {
+        return { id: item.id, qtd: item.quantidade };
+    });
+
+    $.ajax({
+        url: '/api/venda/finalizar',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            carrinho: carrinho,
+            forma_pagamento: formaPagamento,
+            cliente_id: clienteSelecionadoId
+        }),
+        dataType: 'json',
+        success: function () {
+            alert('Venda finalizada com sucesso!');
+            carrinhoLocal = [];
+            clienteSelecionadoId = null;
+            $('#cliente-selecionado-label').text('');
+            fecharModal('modal-pagamento');
+            fecharModal('modal-nova-conta');
+        },
+        error: function (xhr) {
+            var data = xhr.responseJSON || {};
+            alert(data.error || 'Erro ao finalizar venda.');
+        }
+    });
+}
+
+/* ==================== BUSCAR PRODUTO (modal-adicionar-produto) ==================== */
+
+var produtoSelecionado = null;
 
 function buscarProdutoNaConta() {
-    const query = document.getElementById('busca-produto').value;
+    var query = $('#busca-produto').val();
     if (query.length < 2) {
-        document.getElementById('resultado-busca').innerHTML = '';
+        $('#resultado-busca').empty();
         return;
     }
 
-    fetch(`/api/produtos/buscar?query=${encodeURIComponent(query)}`)
-        .then(r => r.json())
-        .then(produtos => {
-            const div = document.getElementById('resultado-busca');
-            div.innerHTML = '';
-            produtos.forEach(p => {
-                const btn = document.createElement('button');
-                btn.className = 'topbar-btn';
-                btn.style = 'width:100%; flex-direction:row; justify-content:flex-start; gap:8px; height:auto; padding:8px;';
-                btn.textContent = `${p.nome} — ${p.marca} — R$ ${p.preco_unidade.toFixed(2)}`;
-                btn.onclick = () => selecionarProduto(p, btn);
-                div.appendChild(btn);
-            });
+    $.getJSON('/api/produtos/buscar', { query: query }, function (produtos) {
+        var $div = $('#resultado-busca').empty();
+        $.each(produtos, function (i, p) {
+            var $btn = $('<button class="topbar-btn"></button>')
+                .css({ width: '100%', 'flex-direction': 'row', 'justify-content': 'flex-start', gap: '8px', height: 'auto', padding: '8px' })
+                .text(p.nome + ' â€” ' + p.marca + ' â€” R$ ' + Number(p.preco_unidade).toFixed(2))
+                .on('click', function () { selecionarProduto(p, $(this)); });
+            $div.append($btn);
         });
+    });
 }
 
-function selecionarProduto(produto, btn) {
+function selecionarProduto(produto, $btn) {
     produtoSelecionado = produto;
-    document.querySelectorAll('#resultado-busca button').forEach(b => b.style.background = '');
-    btn.style.background = '#ffd700';
+    $('#resultado-busca button').css('background', '');
+    $btn.css('background', '#ffd700');
 }
 
 function confirmarAdicionarProduto() {
     if (!produtoSelecionado) return alert('Selecione um produto.');
-    const quantidade = parseFloat(document.getElementById('quantidade-produto').value);
-    console.log('Adicionar:', produtoSelecionado, 'Qtd:', quantidade);
-    // quando ligar ao backend: fetch('/api/produto_conta', { method: 'POST', ... })
+    var quantidade = parseFloat($('#quantidade-produto').val());
+    if (!quantidade || quantidade <= 0) return alert('Informe uma quantidade vÃ¡lida.');
+
+    var preco_unitario = Number(produtoSelecionado.preco_unidade);
+    var subtotal = preco_unitario * quantidade;
+
+    carrinhoLocal.push({
+        id: produtoSelecionado.id,
+        nome: produtoSelecionado.nome,
+        marca: produtoSelecionado.marca,
+        quantidade: quantidade,
+        preco_unitario: preco_unitario,
+        subtotal: subtotal
+    });
+
+    renderizarItensConta();
     fecharModal('modal-adicionar-produto');
+
+    $('#busca-produto').val('');
+    $('#resultado-busca').empty();
+    $('#quantidade-produto').val('1');
     produtoSelecionado = null;
+}
+
+/* ==================== SELECIONAR CLIENTE ==================== */
+
+function carregarClientesModal() {
+    $.getJSON('/api/users', function (users) {
+        renderClientesModal(users);
+    }).fail(function () {
+        console.error('Erro ao carregar clientes.');
+    });
+}
+
+function renderClientesModal(users) {
+    var $div = $('#resultado-clientes').empty();
+    if (!users.length) {
+        $div.html('<p style="padding:8px;">Nenhum cliente encontrado.</p>');
+        return;
+    }
+    $.each(users, function (i, u) {
+        var $btn = $('<button class="topbar-btn"></button>')
+            .css({ width: '100%', 'flex-direction': 'row', 'justify-content': 'flex-start', gap: '8px', height: 'auto', padding: '8px' })
+            .text((u.nome || '') + ' ' + (u.sobrenome || '') + ' â€” @' + u.username)
+            .on('click', function () { confirmarClienteSelecionado(u, $(this)); });
+        $div.append($btn);
+    });
+}
+
+function filtrarClientesModal() {
+    var query = ($('#busca-cliente-modal').val() || '').toLowerCase();
+    $.getJSON('/api/users', function (users) {
+        var filtrados = $.grep(users, function (u) {
+            var text = [u.nome, u.sobrenome, u.username, u.email].filter(Boolean).join(' ').toLowerCase();
+            return !query || text.indexOf(query) !== -1;
+        });
+        renderClientesModal(filtrados);
+    });
+}
+
+function confirmarClienteSelecionado(user, $btn) {
+    clienteSelecionadoId = user.id;
+    $('#resultado-clientes button').css('background', '');
+    $btn.css('background', '#ffd700');
+    $('#cliente-selecionado-label').text('Cliente: ' + (user.nome || '') + ' ' + (user.sobrenome || '') + ' (@' + user.username + ')');
+    fecharModal('modal-selecionar-cliente');
 }
 

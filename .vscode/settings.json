@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^node -e \"require\\('fs'\\)\\.readFileSync\\('app/app/static/base_template\\.js','utf8'\\)\" 2>&1; node -e \"require\\('fs'\\)\\.readFileSync\\('app/app/static/clientes/script\\.js','utf8'\\)\" 2>&1; node -e \"require\\('fs'\\)\\.readFileSync\\('app/app/static/produto/script\\.js','utf8'\\)\" 2>&1; echo \"files readable\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

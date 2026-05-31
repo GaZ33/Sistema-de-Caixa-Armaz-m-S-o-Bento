@@ -1,233 +1,222 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('product-form');
-    const feedback = document.getElementById('product-form-feedback');
-    const formTitle = document.getElementById('form-title');
-    const searchInput = document.getElementById('search-query');
-    const searchButton = document.getElementById('search-product-button');
-    const newButton = document.getElementById('new-product-button');
-    const cancelButton = document.getElementById('cancel-product-button');
-    const deleteButton = document.getElementById('delete-product-button');
-    const productList = document.getElementById('product-list');
+﻿$(document).ready(function () {
 
-    const fields = {
-        id: document.getElementById('product-id'),
-        nome: document.getElementById('product-name'),
-        codigo: document.getElementById('product-code'),
-        marca: document.getElementById('product-brand'),
-        preco_unidade: document.getElementById('product-price'),
-        unidade: document.getElementById('product-unit')
+    var $form        = $('#product-form');
+    var $feedback    = $('#product-form-feedback');
+    var $formTitle   = $('#form-title');
+    var $searchInput = $('#search-query');
+    var $productList = $('#product-list');
+    var $deleteBtn   = $('#delete-product-button');
+
+    var fields = {
+        id:           $('#product-id'),
+        nome:         $('#product-name'),
+        codigo:       $('#product-code'),
+        marca:        $('#product-brand'),
+        preco_unidade:$('#product-price'),
+        unidade:      $('#product-unit')
     };
 
-    let editingId = null;
+    var editingId = null;
 
-    const setFeedback = (message, type = 'info') => {
-        feedback.textContent = message || '';
-        feedback.className = `form-feedback ${type}`;
-    };
+    /* ---------- helpers ---------- */
 
-    const resetForm = () => {
+    function setFeedback(message, type) {
+        $feedback.text(message || '').attr('class', 'form-feedback ' + (type || 'info'));
+    }
+
+    function resetForm() {
         editingId = null;
-        form.reset();
-        fields.id.value = '';
-        formTitle.textContent = 'Novo produto';
-        deleteButton.style.display = 'none';
+        $form[0].reset();
+        fields.id.val('');
+        $formTitle.text('Novo produto');
+        $deleteBtn.hide();
         setFeedback('');
-    };
+    }
 
-    const readForm = () => ({
-        nome: fields.nome.value.trim(),
-        codigo: fields.codigo.value.trim(),
-        marca: fields.marca.value.trim(),
-        preco_unidade: Number(fields.preco_unidade.value),
-        unidade: fields.unidade.value
+    function readForm() {
+        return {
+            nome:          fields.nome.val().trim(),
+            codigo:        fields.codigo.val().trim(),
+            marca:         fields.marca.val().trim(),
+            preco_unidade: Number(fields.preco_unidade.val()),
+            unidade:       fields.unidade.val()
+        };
+    }
+
+    function fillForm(produto) {
+        editingId = produto.id;
+        fields.id.val(produto.id);
+        fields.nome.val(produto.nome || '');
+        fields.codigo.val(produto.codigo || '');
+        fields.marca.val(produto.marca || '');
+        fields.preco_unidade.val(produto.preco_unidade || '');
+        fields.unidade.val(produto.unidade || '');
+        $formTitle.text('Editando produto #' + produto.id);
+        $deleteBtn.show();
+        setFeedback('');
+    }
+
+    /* ---------- render ---------- */
+
+    function renderProducts(products) {
+        if (!products.length) {
+            $productList.html('<p class="empty-message">Nenhum produto cadastrado.</p>');
+            return;
+        }
+        var html = products.map(function (p) {
+            return '<article class="product-card" data-id="' + p.id + '">' +
+                '<div class="product-img-placeholder"><img src="/static/icones/Produto.png" alt="Produto"></div>' +
+                '<div class="product-info">' +
+                    '<span class="product-name">' + p.nome + '</span>' +
+                    '<span class="product-detail">PreÃ§o: R$ ' + Number(p.preco_unidade).toFixed(2) + '</span>' +
+                    '<span class="product-detail">Marca: ' + p.marca + '</span>' +
+                    '<span class="product-detail">Unidade: ' + p.unidade + '</span>' +
+                    '<span class="product-detail">CÃ³digo: ' + p.codigo + '</span>' +
+                '</div>' +
+                '<div class="product-actions">' +
+                    '<button class="action-btn" type="button" data-action="edit" data-id="' + p.id + '" title="Editar">' +
+                        '<img src="/static/icones/EditarSimbolo.png" alt="Editar"></button>' +
+                    '<button class="action-btn" type="button" data-action="delete" data-id="' + p.id + '" title="Excluir">' +
+                        '<img src="/static/icones/Lixosimbolo.png" alt="Excluir"></button>' +
+                '</div>' +
+            '</article>';
+        }).join('');
+        $productList.html(html);
+    }
+
+    /* ---------- AJAX ---------- */
+
+    function refreshProducts(query) {
+        var url = query ? '/api/produtos/buscar?query=' + encodeURIComponent(query) : '/api/produtos';
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function (products) {
+                renderProducts(products);
+                setFeedback('');
+            },
+            error: function () {
+                setFeedback('NÃ£o foi possÃ­vel carregar os produtos.', 'error');
+            }
+        });
+    }
+
+    function submitProduct(event) {
+        event.preventDefault();
+        var payload  = readForm();
+        var method   = editingId ? 'PUT' : 'POST';
+        var endpoint = editingId ? '/api/produtos/' + editingId : '/api/produtos';
+
+        setFeedback('Salvando...', 'info');
+        $.ajax({
+            url: endpoint,
+            method: method,
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            dataType: 'json',
+            success: function () {
+                setFeedback(editingId ? 'Produto atualizado com sucesso.' : 'Produto criado com sucesso.', 'success');
+                resetForm();
+                refreshProducts($searchInput.val().trim());
+            },
+            error: function (xhr) {
+                var data = xhr.responseJSON || {};
+                setFeedback(data.error || 'Falha ao salvar o produto.', 'error');
+            }
+        });
+    }
+
+    function deleteProduct() {
+        if (!editingId) return;
+        if (!window.confirm('Deseja excluir este produto?')) return;
+
+        $.ajax({
+            url: '/api/produtos/' + editingId,
+            method: 'DELETE',
+            success: function () {
+                setFeedback('Produto excluÃ­do com sucesso.', 'success');
+                resetForm();
+                refreshProducts($searchInput.val().trim());
+            },
+            error: function () {
+                setFeedback('Falha ao excluir o produto.', 'error');
+            }
+        });
+    }
+
+    /* ---------- eventos ---------- */
+
+    $form.on('submit', submitProduct);
+
+    $productList.on('click', 'button[data-action]', function () {
+        var action = $(this).data('action');
+        var id     = $(this).data('id');
+        $.getJSON('/api/produtos/' + id, function (produto) {
+            fillForm(produto);
+            if (action === 'delete') deleteProduct();
+        });
     });
 
-    const renderProducts = (products) => {
-        if (!products.length) {
-            productList.innerHTML = '<p class="empty-message">Nenhum produto cadastrado.</p>';
-            return;
-        }
+    $('#search-product-button').on('click', function () {
+        refreshProducts($searchInput.val().trim());
+    });
 
-        productList.innerHTML = products.map((produto) => `
-            <article class="product-card" data-id="${produto.id}">
-                <div class="product-img-placeholder">
-                    <img src="/static/icones/Produto.png" alt="Produto">
-                </div>
-                <div class="product-info">
-                    <span class="product-name">${produto.nome}</span>
-                    <span class="product-detail">Preço: R$ ${Number(produto.preco_unidade).toFixed(2)}</span>
-                    <span class="product-detail">Marca: ${produto.marca}</span>
-                    <span class="product-detail">Unidade: ${produto.unidade}</span>
-                    <span class="product-detail">Código: ${produto.codigo}</span>
-                </div>
-                <div class="product-actions">
-                    <button class="action-btn" type="button" data-action="edit" data-id="${produto.id}" title="Editar">
-                        <img src="/static/icones/EditarSimbolo.png" alt="Editar">
-                    </button>
-                    <button class="action-btn" type="button" data-action="delete" data-id="${produto.id}" title="Excluir">
-                        <img src="/static/icones/Lixosimbolo.png" alt="Excluir">
-                    </button>
-                </div>
-            </article>
-        `).join('');
-    };
+    $searchInput.on('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); refreshProducts($searchInput.val().trim()); }
+    });
 
-    const loadProducts = async (query = '') => {
-        const url = query
-            ? `/api/produtos/buscar?query=${encodeURIComponent(query)}`
-            : '/api/produtos';
+    $('#new-product-button').on('click', resetForm);
+    $('#cancel-product-button').on('click', resetForm);
+    $deleteBtn.on('click', deleteProduct);
 
-        const response = await fetch(url, { headers: { Accept: 'application/json' } });
-        if (!response.ok) {
-            throw new Error('Nao foi possivel carregar os produtos.');
-        }
+    $deleteBtn.hide();
+    refreshProducts();
+});
 
-        return response.json();
-    };
+/* ===== funÃ§Ãµes globais (fora do ready) ===== */
 
-    const refreshProducts = async (query = '') => {
-        try {
-            const products = await loadProducts(query);
-            renderProducts(products);
-            setFeedback('');
-        } catch (error) {
-            setFeedback(error.message, 'error');
-        }
-    };
-
-    const fillForm = (produto) => {
-        editingId = produto.id;
-        fields.id.value = produto.id;
-        fields.nome.value = produto.nome || '';
-        fields.codigo.value = produto.codigo || '';
-        fields.marca.value = produto.marca || '';
-        fields.preco_unidade.value = produto.preco_unidade || '';
-        fields.unidade.value = produto.unidade || '';
-        formTitle.textContent = `Editando produto #${produto.id}`;
-        deleteButton.style.display = 'inline-flex';
-        setFeedback('');
-    };
-
-    const submitProduct = async (event) => {
-        event.preventDefault();
-
-        const payload = readForm();
-        const method = editingId ? 'PUT' : 'POST';
-        const endpoint = editingId ? `/api/produtos/${editingId}` : '/api/produtos';
-
-        try {
-            setFeedback('Salvando...', 'info');
-
-            const response = await fetch(endpoint, {
-                method,
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok) {
-                throw new Error(data.error || 'Falha ao salvar o produto.');
-            }
-
-            setFeedback(editingId ? 'Produto atualizado com sucesso.' : 'Produto criado com sucesso.', 'success');
-            resetForm();
-            await refreshProducts(searchInput.value.trim());
-        } catch (error) {
-            setFeedback(error.message, 'error');
-        }
-    };
-
-    const deleteProduct = async () => {
-        if (!editingId) {
-            return;
-        }
-
-        if (!window.confirm('Deseja excluir este produto?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/produtos/${editingId}`, { method: 'DELETE', headers: { Accept: 'application/json' } });
-            if (!response.ok) {
-                throw new Error('Falha ao excluir o produto.');
-            }
-
-            setFeedback('Produto excluido com sucesso.', 'success');
-            resetForm();
-            await refreshProducts(searchInput.value.trim());
-        } catch (error) {
-            setFeedback(error.message, 'error');
-        }
-    };
-}
-
-// Função para limpar o formulário
 function limparFormulario() {
-    document.getElementById("product-id").value = "";
-    document.getElementById("product-name").value = "";
-    document.getElementById("product-price").value = "";
-    document.getElementById("product-quantity").value = "";
-    document.getElementById("product-unit").value = "";
-    document.getElementById("product-brand").value = "";
+    $('#product-id, #product-name, #product-price, #product-unit, #product-brand, #product-code').val('');
 }
 
-// Modal
 function abrirModal(id) {
-    document.getElementById(id).classList.add('aberto');
+    $('#' + id).addClass('aberto');
 }
 
 function fecharModal(id) {
-    document.getElementById(id).classList.remove('aberto');
+    $('#' + id).removeClass('aberto');
 }
 
 function cadastrarProduto() {
-    const dados = {
-        nome: document.getElementById('cad-prod-nome').value,
-        marca: document.getElementById('cad-prod-marca').value,
-        quantidade: document.getElementById('cad-prod-quantidade').value,
-        quantidade_min: document.getElementById('cad-prod-quantidade-min').value,
-        preco: document.getElementById('cad-prod-preco').value,
+    var dados = {
+        nome:          $('#cad-prod-nome').val().trim(),
+        codigo:        $('#cad-prod-codigo').val().trim(),
+        marca:         $('#cad-prod-marca').val().trim(),
+        preco_unidade: Number($('#cad-prod-preco').val()),
+        unidade:       $('#cad-prod-unidade').val()
     };
 
-    console.log("Cadastrar produto:", dados);
-    // quando ligar ao backend: fetch('/api/produtos', { method: 'POST', body: JSON.stringify(dados) })
+    if (!dados.nome || !dados.codigo || !dados.marca || !dados.preco_unidade || !dados.unidade) {
+        alert('Preencha todos os campos obrigatÃ³rios.');
+        return;
+    }
 
-    fecharModal('modal-cadastrar-produto');
+    $.ajax({
+        url: '/api/produtos',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        dataType: 'json',
+        success: function () {
+            fecharModal('modal-cadastrar-produto');
+            $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
+            $('#cad-prod-unidade').val('');
+            $('#search-product-button').trigger('click');
+        },
+        error: function (xhr) {
+            var data = xhr.responseJSON || {};
+            alert(data.error || 'Falha ao cadastrar produto.');
+        }
+    });
 }
-
-    productList.addEventListener('click', async (event) => {
-        const actionButton = event.target.closest('button[data-action]');
-        if (!actionButton) {
-            return;
-        }
-
-        const { action, id } = actionButton.dataset;
-        const response = await fetch(`/api/produtos/${id}`, { headers: { Accept: 'application/json' } });
-        const produto = await response.json();
-
-        if (action === 'edit') {
-            fillForm(produto);
-            return;
-        }
-
-        if (action === 'delete') {
-            fillForm(produto);
-            deleteProduct();
-        }
-    });
-
-    form.addEventListener('submit', submitProduct);
-    searchButton.addEventListener('click', () => refreshProducts(searchInput.value.trim()));
-    searchInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            refreshProducts(searchInput.value.trim());
-        }
-    });
-    newButton.addEventListener('click', resetForm);
-    cancelButton.addEventListener('click', resetForm);
-    deleteButton.addEventListener('click', deleteProduct);
-
-    deleteButton.style.display = 'none';
-    refreshProducts();
-});

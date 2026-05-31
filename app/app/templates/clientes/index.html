@@ -17,7 +17,7 @@
                 <img src="/static/icones/Clientes.png" alt="Clientes">
                 Clientes
             </a>
-            <a href="#" class="topbar-btn">
+            <a onclick="abrirModal('modal-cadastrar')" class="topbar-btn" style="cursor:pointer;">
                 <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
                 Cadastrar Cliente
             </a>
@@ -57,8 +57,17 @@
         <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
         <h2 class="modal-title">CADASTRAR CLIENTE</h2>
 
-        <label>Nome Completo</label>
+        <label>Nome</label>
         <input type="text" id="cad-nome" placeholder="">
+
+        <label>Sobrenome</label>
+        <input type="text" id="cad-sobrenome" placeholder="">
+
+        <label>Usuário <span style="color:red">*</span></label>
+        <input type="text" id="cad-username" placeholder="">
+
+        <label>Senha <span style="color:red">*</span></label>
+        <input type="password" id="cad-senha" placeholder="">
 
         <label>CPF</label>
         <input type="text" id="cad-cpf" placeholder="">
@@ -68,9 +77,6 @@
 
         <label>Email</label>
         <input type="email" id="cad-email" placeholder="">
-
-        <label>Endereço</label>
-        <input type="text" id="cad-endereco" placeholder="">
 
         <button class="modal-btn" onclick="cadastrarCliente()">Enviar</button>
     </div>
