@@ -18,8 +18,8 @@ class LogAlteracoesService:
             raise NotFoundException(f"LogAlteracoes with id {log_alteracao_id} not found.")
         return log_alteracao
 
-    def update_log_alteracao(self, log_alteracao: LogAlteracoes) -> LogAlteracoes:
-        return self.repository.update(log_alteracao)
+    def update_log_alteracao(self, log_alteracao_id: int, data: dict) -> LogAlteracoes:
+        return self.repository.update(log_alteracao_id, data)
 
     def delete_log_alteracao(self, log_alteracao_id: int):
         self.repository.delete(log_alteracao_id)

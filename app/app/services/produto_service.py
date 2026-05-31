@@ -11,8 +11,8 @@ class ProdutoService:
     def get_produto_by_id(self, produto_id):
         return self.repository.get_by_id(produto_id)
 
-    def update_produto(self, produto):
-        return self.repository.update(produto)
+    def update_produto(self, produto_id, data):
+        return self.repository.update(produto_id, data)
 
     def delete_produto(self, produto_id):
         self.repository.delete(produto_id)

@@ -20,22 +20,30 @@
                 <img src="/static/icones/Adicionar.png" alt="Nova Conta">
                 NOVA CONTA
             </a>
-        </div>
-    </div>
-    <a href="/clientes/index.html" class="topbar-btn">
-        <img src="/static/icones/Clientes.png" alt="Clientes">
-        CLIENTES
-    </a>
-    <a href="/produtos/index.html" class="topbar-btn">
-        <img src="/static/icones/Produto.png" alt="Produtos">
-        ESTOQUE
-    </a>
-        <div class="topbar-spacer"></div>
-    <a href="#" class="topbar-btn">
-        <img src="/static/icones/Login.png" alt="Perfil">
-        PERFIL
-    </a>
-</header>
+            <a href="/clientes/index.html" class="topbar-btn">
+                <img src="/static/icones/Clientes.png" alt="Clientes">
+                Clientes
+            </a>
+            <a href="#" class="topbar-btn">
+                <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
+                Cadastrar Cliente
+            </a>
+            <a href="/produtos/index.html" class="topbar-btn">
+                <img src="/static/icones/Produto.png" alt="Estoque">
+                Estoque
+            </a>	
+        <div class="topbar-spacer"></div> <!-- Cria espaço para perfil ficar na direita -->
+            <a href="#" class="topbar-btn" title="Usuario autenticado">
+                <img src="/static/icones/Login.png" alt="Perfil">
+            {{ current_user.username }}
+            </a>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+                <button type="submit" class="topbar-btn topbar-action">
+                    <img src="/static/icones/Desligar.png" alt="Sair">
+                    Sair
+                </button>
+            </form>
+        </header>
 
 <main class="page-content home-empty">
     <div class="empty-state">

@@ -1,5 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Enum, DECIMAL, Float, Text
 from sqlalchemy.orm import relationship
+from flask_login import UserMixin
 from app import db
 
 class Perfil(db.Model):
@@ -10,7 +11,7 @@ class Perfil(db.Model):
     data_alteracao = Column(DateTime, nullable=True)
     data_criacao = Column(DateTime, nullable=False)
 
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = 'usuario'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -25,6 +26,20 @@ class Usuario(db.Model):
     data_criacao = Column(DateTime, nullable=True)
     data_alteracao = Column(DateTime, nullable=True)
     telefone = Column(String(15), nullable=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'perfil_id': self.perfil_id,
+            'nome': self.nome,
+            'sobrenome': self.sobrenome,
+            'email': self.email,
+            'cpf': self.cpf,
+            'username': self.username,
+            'data_criacao': self.data_criacao.isoformat() if self.data_criacao else None,
+            'data_alteracao': self.data_alteracao.isoformat() if self.data_alteracao else None,
+            'telefone': self.telefone,
+        }
 
 class Conta(db.Model):
     __tablename__ = 'conta'

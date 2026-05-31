@@ -11,8 +11,8 @@ class PerfilAcessosService:
     def get_perfil_acessos_by_id(self, perfil_acessos_id):
         return self.repository.get_by_id(perfil_acessos_id)
 
-    def update_perfil_acessos(self, perfil_acessos):
-        return self.repository.update(perfil_acessos)
+    def update_perfil_acessos(self, perfil_acessos_id, data):
+        return self.repository.update(perfil_acessos_id, data)
 
     def delete_perfil_acessos(self, perfil_acessos_id):
         self.repository.delete(perfil_acessos_id)

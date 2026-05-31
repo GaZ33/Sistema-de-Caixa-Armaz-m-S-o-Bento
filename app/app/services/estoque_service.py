@@ -11,8 +11,8 @@ class EstoqueService:
     def get_estoque_by_id(self, estoque_id):
         return self.repository.get_by_id(estoque_id)
 
-    def update_estoque(self, estoque):
-        return self.repository.update(estoque)
+    def update_estoque(self, estoque_id, data):
+        return self.repository.update(estoque_id, data)
 
     def delete_estoque(self, estoque_id):
         self.repository.delete(estoque_id)
