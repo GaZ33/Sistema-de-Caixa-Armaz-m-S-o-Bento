@@ -1,53 +1,37 @@
 from flask import Blueprint, jsonify, request
 from app.services.produto_service import ProdutoService
 from app.models import Produto
+from app.web.dto import model_to_dto, models_to_dtos
 
 produto_blueprint = Blueprint('produto', __name__)
 
 def create_produto_controller(service: ProdutoService):
     @produto_blueprint.route('/produtos', methods=['POST'])
     def create_produto():
-        data = request.json
+        data = request.get_json(silent=True) or {}
         produto = Produto(**data)
         created_produto = service.create_produto(produto)
-        return jsonify(created_produto), 201
+        return jsonify(model_to_dto(created_produto)), 201
 
     @produto_blueprint.route('/produtos', methods=['GET'])
     def get_produtos():
         produtos = service.get_all_produtos()
-        produtos_serializados = [
-            {
-                'id': produto.id,
-                'nome': produto.nome,
-                'preco_unidade': float(produto.preco_unidade),
-                'quantidade': 0,
-                'unidade': produto.unidade,
-                'codigo': produto.codigo,
-                'marca': produto.marca
-            }
-            for produto in produtos
-        ]
-        return jsonify(produtos_serializados)
+        return jsonify(models_to_dtos(produtos))
 
     @produto_blueprint.route('/produtos/<int:produto_id>', methods=['GET'])
     def get_produto(produto_id):
         produto = service.get_produto_by_id(produto_id)
-        produto_serializado = {
-            'id': produto.id,
-            'nome': produto.nome,
-            'preco_unidade': float(produto.preco_unidade),
-            'unidade': produto.unidade, 
-            'codigo': produto.codigo,
-            'marca': produto.marca
-        }
-        return jsonify(produto_serializado)
+        if not produto:
+            return jsonify({'error': f'Produto with id {produto_id} not found.'}), 404
+        return jsonify(model_to_dto(produto))
 
     @produto_blueprint.route('/produtos/<int:produto_id>', methods=['PUT'])
     def update_produto(produto_id):
-        data = request.json
-        produto = Produto(id=produto_id, **data)
-        updated_produto = service.update_produto(produto)
-        return jsonify(updated_produto)
+        data = request.get_json(silent=True) or {}
+        updated_produto = service.update_produto(produto_id, data)
+        if not updated_produto:
+            return jsonify({'error': f'Produto with id {produto_id} not found.'}), 404
+        return jsonify(model_to_dto(updated_produto))
 
     @produto_blueprint.route('/produtos/<int:produto_id>', methods=['DELETE'])
     def delete_produto(produto_id):
@@ -58,18 +42,6 @@ def create_produto_controller(service: ProdutoService):
     def buscar_produtos():
         query = request.args.get('query', '')
         produtos = service.buscar_produtos(query)
-
-        produtos_serializados = [
-            {
-                'id': produto.id,
-                'nome': produto.nome,
-                'preco_unidade': float(produto.preco_unidade),
-                'codigo': produto.codigo,
-                'unidade': produto.unidade,
-                'marca': produto.marca
-            }
-            for produto in produtos
-        ]
-        return jsonify(produtos_serializados)
+        return jsonify(models_to_dtos(produtos))
 
     return produto_blueprint

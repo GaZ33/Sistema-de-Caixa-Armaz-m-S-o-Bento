@@ -18,8 +18,8 @@ class LogPagamentoService:
             raise NotFoundException(f"LogPagamento with id {log_pagamento_id} not found.")
         return log_pagamento
 
-    def update_log_pagamento(self, log_pagamento: LogPagamento) -> LogPagamento:
-        return self.repository.update(log_pagamento)
+    def update_log_pagamento(self, log_pagamento_id: int, data: dict) -> LogPagamento:
+        return self.repository.update(log_pagamento_id, data)
 
     def delete_log_pagamento(self, log_pagamento_id: int):
         self.repository.delete(log_pagamento_id)
