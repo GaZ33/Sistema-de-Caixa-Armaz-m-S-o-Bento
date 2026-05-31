@@ -109,3 +109,4 @@ function confirmarAdicionarProduto() {
     fecharModal('modal-adicionar-produto');
     produtoSelecionado = null;
 }
+
