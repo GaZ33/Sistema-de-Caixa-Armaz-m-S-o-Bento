@@ -13,17 +13,25 @@
                 <img src="/static/icones/Home.png" alt="Home">
                 HOME
             </a>
-            <a href="/clientes/index.html" class="topbar-btn active">
-                <img src="/static/icones/Clientes.png" alt="Clientes">
-                Clientes
-            </a>
-            <a onclick="abrirModal('modal-cadastrar')" class="topbar-btn" style="cursor:pointer;">
-                <img src="/static/icones/Adicionar.png" alt="Adicionar Cliente">
-                Cadastrar Cliente
-            </a>
+            <div class="nav-group">
+                <a href="/clientes/index.html" class="topbar-btn active">
+                    <img src="/static/icones/Clientes.png" alt="Clientes">
+                    CLIENTES
+                </a>
+                <div class="nav-sub">
+                    <a onclick="abrirModal('modal-cadastrar')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
+                        CADASTRAR CLIENTE
+                    </a>
+                    <a href="#" class="topbar-btn">
+                        <img src="/static/icones/ProcurarCadastro.png" alt="Procurar Cadastro">
+                        PROCURAR CADASTRO
+                    </a>
+                </div>
+            </div>
             <a href="/produtos/index.html" class="topbar-btn">
                 <img src="/static/icones/Produto.png" alt="Produtos">
-                ESTOQUE
+                PRODUTOS
             </a>
             <div class="topbar-spacer"></div>
             <form method="post" action="{{ url_for('auth.logout') }}">
