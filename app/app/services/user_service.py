@@ -82,6 +82,18 @@ class UserService:
             return None
 
         if bcrypt.check_password_hash(user.senha, f"{senha}{user.salt}"):
+            def authenticate_user(self, identifier: str, senha: str):
+                user = self.repository.get_by_username_or_email(identifier)
+                if not user:
+                    return None
+
+                if bcrypt.check_password_hash(user.senha, f"{senha}{user.salt}"):
+                    # Bloqueia se for cliente (perfil_id = 2, por exemplo)
+                    if user.perfil_id == 2:
+                        return None
+                    return user
+
+                return None
             return user
 
         return None

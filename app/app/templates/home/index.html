@@ -20,6 +20,10 @@
                 <img src="/static/icones/Adicionar.png" alt="Nova Conta">
                 NOVA CONTA
             </a>
+            <a onclick="abrirModal('modal-cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
+                <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
+                NOVO FUNCIONÁRIO
+            </a>
         </div>
     </div>
     <div class="nav-group">
@@ -174,6 +178,38 @@
             <button class="modal-btn" onclick="confirmarPagamento('cartao_debito')">Cartão de Débito</button>
             <button class="modal-btn" onclick="confirmarPagamento('pix')">PIX</button>
         </div>
+    </div>
+</div>
+
+<!-- Modal Cadastrar Funcionário -->
+<div class="modal-overlay" id="modal-cadastrar-funcionario" onclick="fecharModal('modal-cadastrar-funcionario')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-cadastrar-funcionario')">✕</button>
+        <img src="/static/icones/Login.png" alt="Funcionário" class="modal-icon">
+        <h2 class="modal-title">CADASTRAR FUNCIONÁRIO</h2>
+
+        <label>Nome <span style="color:red">*</span></label>
+        <input type="text" id="func-nome" placeholder="">
+
+        <label>Sobrenome</label>
+        <input type="text" id="func-sobrenome" placeholder="">
+
+        <label>Telefone <span style="color:red">*</span></label>
+        <input type="text" id="func-telefone" placeholder="">
+
+        <label>CPF</label>
+        <input type="text" id="func-cpf" placeholder="">
+
+        <label>Email</label>
+        <input type="email" id="func-email" placeholder="">
+
+        <label>Usuário <span style="color:red">*</span></label>
+        <input type="text" id="func-username" placeholder="">
+
+        <label>Senha <span style="color:red">*</span></label>
+        <input type="password" id="func-senha" placeholder="">
+
+        <button class="modal-btn" onclick="cadastrarFuncionario()">Enviar</button>
     </div>
 </div>
 

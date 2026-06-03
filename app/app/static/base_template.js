@@ -194,3 +194,41 @@ function confirmarClienteSelecionado(user, $btn) {
     fecharModal('modal-selecionar-cliente');
 }
 
+function cadastrarFuncionario() {
+    var nome     = $('#func-nome').val().trim();
+    var telefone = $('#func-telefone').val().trim();
+    var username = $('#func-username').val().trim();
+    var senha    = $('#func-senha').val().trim();
+
+    if (!nome) { alert('Nome é obrigatório.'); return; }
+    if (!telefone) { alert('Telefone é obrigatório.'); return; }
+    if (!username) { alert('Usuário é obrigatório.'); return; }
+    if (!senha) { alert('Senha é obrigatória.'); return; }
+
+    var dados = {
+        nome:      nome,
+        sobrenome: $('#func-sobrenome').val().trim() || undefined,
+        telefone:  telefone,
+        cpf:       $('#func-cpf').val().trim() || undefined,
+        email:     $('#func-email').val().trim() || undefined,
+        username:  username,
+        senha:     senha,
+        perfil_id: 2
+    };
+
+    $.ajax({
+        url: '/api/users',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        success: function () {
+            fecharModal('modal-cadastrar-funcionario');
+            $('#func-nome, #func-sobrenome, #func-telefone, #func-cpf, #func-email, #func-username, #func-senha').val('');
+            alert('Funcionário cadastrado com sucesso!');
+        },
+        error: function (xhr) {
+            var data = xhr.responseJSON || {};
+            alert(data.error || 'Falha ao cadastrar funcionário.');
+        }
+    });
+}

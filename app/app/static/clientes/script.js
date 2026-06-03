@@ -20,24 +20,23 @@ function cadastrarCliente() {
         return;
     }
 
-    /* Nickname gerado pelo nome e pelos 5 digitos do cpf*/
-        var cpf = $('#cad-cpf').val().trim().replace(/\D/g, '');
-        var sufixo = cpf ? cpf.substring(0, 5) : Math.floor(Math.random() * 10000);
-        var username = nome.toLowerCase()
+    /* Nickname gerado pelo nome duas vezes escrito em minúsculo*/
+    var nomeFormatado = nome.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/\s+/g, '') + sufixo;
+            .replace(/\s+/g, '');
+        var username = nomeFormatado + nomeFormatado;
 
-    var dados = {
-        nome:      nome,
-        sobrenome: sobrenome || undefined,
-        cpf:       $('#cad-cpf').val().trim() || undefined,
-        telefone:  $('#cad-telefone').val().trim() || undefined,
-        email:     $('#cad-email').val().trim() || undefined,
-        username:  username,
-        senha:     nome.substring(0, 5).toLowerCase()
-               .normalize('NFD').replace(/[\u0300-\u036f]/g, '') + sufixo,
-        salt:      'default'
-    };
+        var dados = {
+            nome:      nome,
+            sobrenome: sobrenome || undefined,
+            cpf:       $('#cad-cpf').val().trim() || undefined,
+            telefone:  $('#cad-telefone').val().trim() || undefined,
+            email:     $('#cad-email').val().trim() || undefined,
+            username:  username,
+            senha:     nomeFormatado + nomeFormatado,
+            salt:      'default',
+            perfil_id: 3        // ← força a ser cliente (id3)
+        };
 
     $.ajax({
         url: '/api/users',
@@ -131,15 +130,16 @@ $(document).ready(function () {
             url: '/api/users',
             method: 'GET',
             dataType: 'json',
-            success: function (clients) {
-                var term = $search.val().trim().toLowerCase();
-                var filtered = $.grep(clients, function (c) {
-                    var searchable = [c.nome, c.sobrenome, c.username, c.email, c.cpf]
-                        .filter(Boolean).join(' ').toLowerCase();
-                    return !term || searchable.indexOf(term) !== -1;
-                });
-                renderClients(filtered);
-            },
+                success: function (clients) {
+                    var term = $search.val().trim().toLowerCase();
+                    var filtered = $.grep(clients, function (c) {
+                        if (c.perfil_id !== 3) return false;  // ← só clientes
+                        var searchable = [c.nome, c.sobrenome, c.username, c.email, c.cpf]
+                            .filter(Boolean).join(' ').toLowerCase();
+                        return !term || searchable.indexOf(term) !== -1;
+                    });
+                    renderClients(filtered);
+                },
             error: function () {
                 $list.html('<p class="empty-message">Não foi possível carregar os clientes.</p>');
             }
