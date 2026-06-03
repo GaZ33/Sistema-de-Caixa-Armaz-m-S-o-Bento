@@ -23,7 +23,7 @@
                         <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
                         CADASTRAR CLIENTE
                     </a>
-                    <a href="#" class="topbar-btn">
+                    <a onclick="toggleBusca()" class="topbar-btn" style="cursor:pointer;">
                         <img src="/static/icones/ProcurarCadastro.png" alt="Procurar Cadastro">
                         PROCURAR CADASTRO
                     </a>
@@ -43,13 +43,14 @@
         </header>
 
         <main class="page-content clientes-page">
-            <section class="clientes-toolbar">
-                <div>
-                    <h2 class="titulo-cliente">Lista de Clientes</h2>
-                    <p class="section-subtitle">Tela conectada com o endpoint /api/users.</p>
-                </div>
-                <input id="client-search" class="product-search" type="search" placeholder="Buscar por nome, usuario ou email">
-            </section>
+        <section class="clientes-toolbar">
+            <div>
+                <h2 class="titulo-cliente">Lista de Clientes</h2>
+            </div>
+        </section>
+        <div class="busca-wrapper" id="busca-wrapper">
+            <input id="client-search" class="product-search" type="search" placeholder="Buscar por nome, usuário ou email" style="width:100%; margin-bottom:12px;">
+        </div>
 
             <div id="client-list" class="client-list">
                 <!-- cards gerados pelo JS -->

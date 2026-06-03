@@ -27,9 +27,13 @@
                         <img src="/static/icones/Adicionar.png" alt="Cadastrar Produto">
                         CADASTRAR PRODUTO
                     </a>
-                    <a href="#" class="topbar-btn">
+                    <a onclick="toggleBuscaProduto()" class="topbar-btn" style="cursor:pointer;">
                         <img src="/static/icones/ProcurarProduto.png" alt="Procurar Produto">
                         PROCURAR PRODUTO
+                    </a>
+                    <a onclick="gerarRelatorioEstoque()" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/olho.png" alt="Estoque Baixo">
+                        ESTOQUE BAIXO
                     </a>
                 </div>
             </div>
@@ -44,61 +48,12 @@
 
         <main class="page-content product-page">
             <section class="product-toolbar">
-                <div>
-                    <h2 class="section-title">Gestão de Produtos</h2>
-                    <p class="section-subtitle">Cadastro, edição e exclusão via AJAX no backend.</p>
-                </div>
-                <div class="product-toolbar-actions">
-                    <input id="search-query" class="product-search" type="search" placeholder="Buscar por nome ou código">
-                    <button type="button" id="search-product-button" class="primary-btn">Buscar</button>
-                    <button type="button" id="new-product-button" class="secondary-btn">Novo</button>
-                </div>
+                <h2 class="section-title">Lista de Produtos</h2>
             </section>
 
-            <section class="product-form-card">
-                <div class="product-form-header">
-                    <h3 id="form-title">Novo produto</h3>
-                    <span id="product-form-feedback" class="form-feedback"></span>
-                </div>
-
-                <form id="product-form" data-product-form>
-                    <input type="hidden" id="product-id" name="id">
-                    <div class="product-form-grid">
-                        <label>
-                            Nome
-                            <input id="product-name" name="nome" type="text" required maxlength="45">
-                        </label>
-                        <label>
-                            Código
-                            <input id="product-code" name="codigo" type="text" required maxlength="25">
-                        </label>
-                        <label>
-                            Marca
-                            <input id="product-brand" name="marca" type="text" required maxlength="45">
-                        </label>
-                        <label>
-                            Preço unitário
-                            <input id="product-price" name="preco_unidade" type="number" step="0.01" min="0" required>
-                        </label>
-                        <label>
-                            Unidade
-                            <select id="product-unit" name="unidade" required>
-                                <option value="">Selecione</option>
-                                <option value="pacote">Pacote</option>
-                                <option value="unidade">Unidade</option>
-                                <option value="kg">Kg</option>
-                                <option value="ml">Ml</option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div class="product-form-actions">
-                        <button type="submit" class="primary-btn">Salvar</button>
-                        <button type="button" id="cancel-product-button" class="secondary-btn">Cancelar</button>
-                        <button type="button" id="delete-product-button" class="danger-btn">Excluir</button>
-                    </div>
-                </form>
-            </section>
+            <div class="busca-wrapper" id="busca-wrapper-produto">
+                <input id="search-query" class="product-search" type="search" placeholder="Buscar por nome ou código";>
+            </div>
 
             <section>
                 <div id="product-list" class="product-list"></div>
@@ -117,25 +72,35 @@
         <label>Nome</label>
         <input type="text" id="cad-prod-nome" placeholder="">
 
-        <label>Código</label>
-        <input type="text" id="cad-prod-codigo" placeholder="">
-
         <label>Marca</label>
         <input type="text" id="cad-prod-marca" placeholder="">
 
-        <label>Preço unitário</label>
-        <input type="number" id="cad-prod-preco" step="0.01" min="0" placeholder="">
+        <label>Código</label>
+        <input type="text" id="cad-prod-codigo" placeholder="Ex: FEI001">
 
         <label>Unidade</label>
-        <select id="cad-prod-unidade">
-            <option value="">Selecione</option>
+        <select id="cad-prod-unidade" style="width:100%; padding:7px 10px; border:1.5px solid #d9a800; border-radius:8px; background:#fffbe8; font-size:14px; color:#3a2a00;">
             <option value="pacote">Pacote</option>
             <option value="unidade">Unidade</option>
             <option value="kg">Kg</option>
-            <option value="ml">Ml</option>
+            <option value="ml">ML</option>
         </select>
 
-        <button class="modal-btn" onclick="cadastrarProduto()">Enviar</button>
+        <div style="display:flex; gap:16px;">
+            <div style="flex:1;">
+                <label>Quantidade Atual</label>
+                <input type="number" id="cad-prod-quantidade" placeholder="0">
+            </div>
+            <div style="flex:1;">
+                <label>Quantidade Mín</label>
+                <input type="number" id="cad-prod-quantidade-min" placeholder="0">
+            </div>
+        </div>
+
+        <label>Preço Unitário</label>
+        <input type="number" step="0.01" id="cad-prod-preco" placeholder="0.00">
+
+        <button class="modal-btn" id="modal-prod-btn" onclick="handleModalProdBtn()">Enviar</button>
     </div>
 </div>
 

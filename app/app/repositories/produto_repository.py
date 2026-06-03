@@ -8,8 +8,10 @@ class SQLAlchemyProdutoRepository:
         return produto
 
     def delete(self, produto_id):
+        from app.models import Estoque
         produto = self.get_by_id(produto_id)
         if produto:
+            Estoque.query.filter_by(produto_id=produto_id).delete()
             db.session.delete(produto)
             db.session.commit()
 

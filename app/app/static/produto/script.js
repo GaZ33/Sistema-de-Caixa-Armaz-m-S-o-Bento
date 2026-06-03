@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿var editingId = null;
+
+$(document).ready(function () {
 
     var $form        = $('#product-form');
     var $feedback    = $('#product-form-feedback');
@@ -16,8 +18,6 @@
         unidade:      $('#product-unit')
     };
 
-    var editingId = null;
-
     /* ---------- helpers ---------- */
 
     function setFeedback(message, type) {
@@ -26,34 +26,20 @@
 
     function resetForm() {
         editingId = null;
-        $form[0].reset();
         fields.id.val('');
-        $formTitle.text('Novo produto');
         $deleteBtn.hide();
         setFeedback('');
     }
 
-    function readForm() {
-        return {
-            nome:          fields.nome.val().trim(),
-            codigo:        fields.codigo.val().trim(),
-            marca:         fields.marca.val().trim(),
-            preco_unidade: Number(fields.preco_unidade.val()),
-            unidade:       fields.unidade.val()
-        };
-    }
-
     function fillForm(produto) {
         editingId = produto.id;
-        fields.id.val(produto.id);
-        fields.nome.val(produto.nome || '');
-        fields.codigo.val(produto.codigo || '');
-        fields.marca.val(produto.marca || '');
-        fields.preco_unidade.val(produto.preco_unidade || '');
-        fields.unidade.val(produto.unidade || '');
-        $formTitle.text('Editando produto #' + produto.id);
-        $deleteBtn.show();
-        setFeedback('');
+        $('#cad-prod-nome').val(produto.nome || '');
+        $('#cad-prod-codigo').val(produto.codigo || '');
+        $('#cad-prod-marca').val(produto.marca || '');
+        $('#cad-prod-preco').val(produto.preco_unidade || '');
+        $('#cad-prod-unidade').val(produto.unidade || '');
+        $('#modal-cadastrar-produto .modal-title').text('ALTERAR PRODUTO');
+        $('#modal-prod-btn').data('editing', produto.id);
     }
 
     /* ---------- render ---------- */
@@ -68,10 +54,10 @@
                 '<div class="product-img-placeholder"><img src="/static/icones/Produto.png" alt="Produto"></div>' +
                 '<div class="product-info">' +
                     '<span class="product-name">' + p.nome + '</span>' +
-                    '<span class="product-detail">PreÃ§o: R$ ' + Number(p.preco_unidade).toFixed(2) + '</span>' +
+                    '<span class="product-detail">Preço: R$ ' + Number(p.preco_unidade).toFixed(2) + '</span>' +
                     '<span class="product-detail">Marca: ' + p.marca + '</span>' +
                     '<span class="product-detail">Unidade: ' + p.unidade + '</span>' +
-                    '<span class="product-detail">CÃ³digo: ' + p.codigo + '</span>' +
+                    '<span class="product-detail">Código: ' + p.codigo + '</span>' +
                 '</div>' +
                 '<div class="product-actions">' +
                     '<button class="action-btn" type="button" data-action="edit" data-id="' + p.id + '" title="Editar">' +
@@ -86,7 +72,7 @@
 
     /* ---------- AJAX ---------- */
 
-    function refreshProducts(query) {
+    window.refreshProducts = function(query) {
         var url = query ? '/api/produtos/buscar?query=' + encodeURIComponent(query) : '/api/produtos';
         $.ajax({
             url: url,
@@ -94,91 +80,51 @@
             dataType: 'json',
             success: function (products) {
                 renderProducts(products);
-                setFeedback('');
             },
             error: function () {
-                setFeedback('NÃ£o foi possÃ­vel carregar os produtos.', 'error');
+                $productList.html('<p class="empty-message">Não foi possível carregar os produtos.</p>');
             }
         });
-    }
-
-    function submitProduct(event) {
-        event.preventDefault();
-        var payload  = readForm();
-        var method   = editingId ? 'PUT' : 'POST';
-        var endpoint = editingId ? '/api/produtos/' + editingId : '/api/produtos';
-
-        setFeedback('Salvando...', 'info');
-        $.ajax({
-            url: endpoint,
-            method: method,
-            contentType: 'application/json',
-            data: JSON.stringify(payload),
-            dataType: 'json',
-            success: function () {
-                setFeedback(editingId ? 'Produto atualizado com sucesso.' : 'Produto criado com sucesso.', 'success');
-                resetForm();
-                refreshProducts($searchInput.val().trim());
-            },
-            error: function (xhr) {
-                var data = xhr.responseJSON || {};
-                setFeedback(data.error || 'Falha ao salvar o produto.', 'error');
-            }
-        });
-    }
-
-    function deleteProduct() {
-        if (!editingId) return;
-        if (!window.confirm('Deseja excluir este produto?')) return;
-
-        $.ajax({
-            url: '/api/produtos/' + editingId,
-            method: 'DELETE',
-            success: function () {
-                setFeedback('Produto excluÃ­do com sucesso.', 'success');
-                resetForm();
-                refreshProducts($searchInput.val().trim());
-            },
-            error: function () {
-                setFeedback('Falha ao excluir o produto.', 'error');
-            }
-        });
-    }
+    };
 
     /* ---------- eventos ---------- */
-
-    $form.on('submit', submitProduct);
 
     $productList.on('click', 'button[data-action]', function () {
         var action = $(this).data('action');
         var id     = $(this).data('id');
-        $.getJSON('/api/produtos/' + id, function (produto) {
-            fillForm(produto);
-            if (action === 'delete') deleteProduct();
-        });
+
+        if (action === 'delete') {
+            if (!window.confirm('Deseja excluir este produto?')) return;
+            $.ajax({
+                url: '/api/produtos/' + id,
+                method: 'DELETE',
+                success: function () {
+                    refreshProducts('');
+                },
+                error: function () {
+                    alert('Falha ao excluir o produto.');
+                }
+            });
+        }
+
+        if (action === 'edit') {
+            $.getJSON('/api/produtos/' + id, function (produto) {
+                fillForm(produto);
+                abrirModal('modal-cadastrar-produto');
+            });
+        }
     });
 
-    $('#search-product-button').on('click', function () {
+    $searchInput.on('input', function () {
         refreshProducts($searchInput.val().trim());
     });
 
-    $searchInput.on('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); refreshProducts($searchInput.val().trim()); }
-    });
-
-    $('#new-product-button').on('click', resetForm);
-    $('#cancel-product-button').on('click', resetForm);
-    $deleteBtn.on('click', deleteProduct);
-
     $deleteBtn.hide();
-    refreshProducts();
+    refreshProducts('');
 });
 
-/* ===== funÃ§Ãµes globais (fora do ready) ===== */
+/* ===== funções globais ===== */
 
-function limparFormulario() {
-    $('#product-id, #product-name, #product-price, #product-unit, #product-brand, #product-code').val('');
-}
 
 function abrirModal(id) {
     $('#' + id).addClass('aberto');
@@ -186,19 +132,28 @@ function abrirModal(id) {
 
 function fecharModal(id) {
     $('#' + id).removeClass('aberto');
+    $('#modal-cadastrar-produto .modal-title').text('CADASTRAR PRODUTO');
+    $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
+    $('#cad-prod-unidade').val('');
+    $('#modal-prod-btn').removeData('editing');
+    editingId = null;
+
 }
 
 function cadastrarProduto() {
     var dados = {
         nome:          $('#cad-prod-nome').val().trim(),
-        codigo:        $('#cad-prod-codigo').val().trim(),
         marca:         $('#cad-prod-marca').val().trim(),
-        preco_unidade: Number($('#cad-prod-preco').val()),
-        unidade:       $('#cad-prod-unidade').val()
+        codigo:        $('#cad-prod-codigo').val().trim(),
+        unidade:       $('#cad-prod-unidade').val(),
+        preco_unidade: parseFloat($('#cad-prod-preco').val()),
     };
 
-    if (!dados.nome || !dados.codigo || !dados.marca || !dados.preco_unidade || !dados.unidade) {
-        alert('Preencha todos os campos obrigatÃ³rios.');
+    var quantidade     = parseFloat($('#cad-prod-quantidade').val()) || 0;
+    var quantidade_min = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
+
+    if (!dados.nome || !dados.marca || !dados.codigo || !dados.preco_unidade) {
+        alert('Preencha todos os campos obrigatórios.');
         return;
     }
 
@@ -207,16 +162,124 @@ function cadastrarProduto() {
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(dados),
-        dataType: 'json',
-        success: function () {
-            fecharModal('modal-cadastrar-produto');
-            $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
-            $('#cad-prod-unidade').val('');
-            $('#search-product-button').trigger('click');
+        success: function (produto) {
+            $.ajax({
+                url: '/api/estoque',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    produto_id: produto.id,
+                    quantidade_atual: quantidade,
+                    quantidade_minima: quantidade_min
+                }),
+                success: function () {
+                    fecharModal('modal-cadastrar-produto');
+                    refreshProducts('');
+                },
+                error: function () {
+                    alert('Produto criado mas erro ao registrar estoque.');
+                }
+            });
         },
         error: function (xhr) {
-            var data = xhr.responseJSON || {};
-            alert(data.error || 'Falha ao cadastrar produto.');
+            alert('Erro ao cadastrar produto: ' + xhr.responseText);
         }
     });
+}
+
+function atualizarProduto() {
+    if (!editingId) return;
+
+    var dados = {
+        nome:          $('#cad-prod-nome').val().trim(),
+        codigo:        $('#cad-prod-codigo').val().trim(),
+        marca:         $('#cad-prod-marca').val().trim(),
+        preco_unidade: parseFloat($('#cad-prod-preco').val()),
+        unidade:       $('#cad-prod-unidade').val()
+    };
+
+    if (!dados.nome || !dados.codigo || !dados.marca || !dados.preco_unidade) {
+        alert('Preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    $.ajax({
+        url: '/api/produtos/' + editingId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        success: function () {
+            fecharModal('modal-cadastrar-produto');
+            refreshProducts('');
+        },
+        error: function (xhr) {
+            alert('Erro ao atualizar produto: ' + xhr.responseText);
+        }
+    });
+}
+
+function toggleBuscaProduto() {
+    var wrapper = document.getElementById('busca-wrapper-produto');
+    wrapper.classList.toggle('aberta');
+    if (wrapper.classList.contains('aberta')) {
+        document.getElementById('search-query').focus();
+    }
+}
+
+function gerarRelatorioEstoque() {
+    $.when(
+        $.getJSON('/api/estoque'),
+        $.getJSON('/api/produtos')
+    ).done(function(estoqueRes, produtosRes) {
+        var estoques  = estoqueRes[0];
+        var produtos  = produtosRes[0];
+
+        var produtoMap = {};
+        produtos.forEach(function(p) {
+            produtoMap[p.id] = p;
+        });
+
+        var baixos = estoques.filter(function(e) {
+            return e.quantidade_minima !== null &&
+                   e.quantidade_atual <= e.quantidade_minima;
+        });
+
+        if (!baixos.length) {
+            alert('Nenhum produto com estoque baixo no momento.');
+            return;
+        }
+
+        var linhas = 'RELATÓRIO DE ESTOQUE BAIXO\n';
+        linhas += 'Gerado em: ' + new Date().toLocaleString('pt-BR') + '\n';
+        linhas += '='.repeat(40) + '\n\n';
+
+        baixos.forEach(function(e) {
+            var produto = produtoMap[e.produto_id];
+            linhas += 'Produto: ' + (produto ? produto.nome : 'ID ' + e.produto_id) + '\n';
+            linhas += 'Marca: ' + (produto ? produto.marca : '-') + '\n';
+            linhas += 'Quantidade atual: ' + e.quantidade_atual + '\n';
+            linhas += 'Quantidade mínima: ' + e.quantidade_minima + '\n';
+            linhas += '-'.repeat(30) + '\n';
+        });
+
+        var blob = new Blob([linhas], { type: 'text/plain;charset=utf-8' });
+        var url  = URL.createObjectURL(blob);
+        var a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'estoque_baixo_' + new Date().toISOString().slice(0,10) + '.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }).fail(function() {
+        alert('Não foi possível carregar os dados.');
+    });
+}
+
+function handleModalProdBtn() {
+    var id = $('#modal-prod-btn').data('editing');
+    if (id) {
+        editingId = id;
+        atualizarProduto();
+    } else {
+        cadastrarProduto();
+    }
 }

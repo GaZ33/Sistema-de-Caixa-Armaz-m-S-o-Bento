@@ -87,3 +87,11 @@ $(document).ready(function () {
     $search.on('input', window.refresh);
     window.refresh();
 });
+
+function toggleBusca() {
+    var wrapper = document.getElementById('busca-wrapper');
+    wrapper.classList.toggle('aberta');
+    if (wrapper.classList.contains('aberta')) {
+        document.getElementById('client-search').focus();
+    }
+}
