@@ -23,15 +23,15 @@
                         <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
                         CADASTRAR CLIENTE
                     </a>
-                    <a onclick="toggleBusca()" class="topbar-btn" style="cursor:pointer;">
-                        <img src="/static/icones/ProcurarCadastro.png" alt="Procurar Cadastro">
+                    <a onclick="toggleBuscaCliente()" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/ProcurarCadastro.png" alt="Procurar">
                         PROCURAR CADASTRO
                     </a>
                 </div>
             </div>
             <a href="/produtos/index.html" class="topbar-btn">
                 <img src="/static/icones/Produto.png" alt="Produtos">
-                PRODUTOS
+                ESTOQUE
             </a>
             <div class="topbar-spacer"></div>
             <form method="post" action="{{ url_for('auth.logout') }}">
@@ -43,14 +43,13 @@
         </header>
 
         <main class="page-content clientes-page">
-        <section class="clientes-toolbar">
-            <div>
+            <section class="clientes-toolbar">
                 <h2 class="titulo-cliente">Lista de Clientes</h2>
+            </section>
+
+            <div class="busca-wrapper" id="busca-wrapper-cliente">
+                <input id="client-search" class="product-search" type="search" placeholder="Buscar por nome, usuário ou email">
             </div>
-        </section>
-        <div class="busca-wrapper" id="busca-wrapper">
-            <input id="client-search" class="product-search" type="search" placeholder="Buscar por nome, usuário ou email" style="width:100%; margin-bottom:12px;">
-        </div>
 
             <div id="client-list" class="client-list">
                 <!-- cards gerados pelo JS -->
@@ -60,36 +59,30 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-cadastrar" onclick="fecharModal('modal-cadastrar')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-    <button class="xmodal" onclick="fecharModal('modal-cadastrar')">✕</button>
-        <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
-        <h2 class="modal-title">CADASTRAR CLIENTE</h2>
+    <div class="modal-overlay" id="modal-cadastrar" onclick="fecharModal('modal-cadastrar')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="xmodal" onclick="fecharModal('modal-cadastrar')">✕</button>
+            <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
+            <h2 class="modal-title">CADASTRAR CLIENTE</h2>
 
-        <label>Nome</label>
-        <input type="text" id="cad-nome" placeholder="">
+            <label>Nome <span style="color:red">*</span></label>
+            <input type="text" id="cad-nome" placeholder="">
 
-        <label>Sobrenome</label>
-        <input type="text" id="cad-sobrenome" placeholder="">
+            <label>Sobrenome</label>
+            <input type="text" id="cad-sobrenome" placeholder="">
 
-        <label>Usuário <span style="color:red">*</span></label>
-        <input type="text" id="cad-username" placeholder="">
+            <label>CPF</label>
+            <input type="text" id="cad-cpf" placeholder="">
 
-        <label>Senha <span style="color:red">*</span></label>
-        <input type="password" id="cad-senha" placeholder="">
+            <label>Telefone</label>
+            <input type="text" id="cad-telefone" placeholder="">
 
-        <label>CPF</label>
-        <input type="text" id="cad-cpf" placeholder="">
+            <label>Email</label>
+            <input type="email" id="cad-email" placeholder="">
 
-        <label>Telefone</label>
-        <input type="text" id="cad-telefone" placeholder="">
-
-        <label>Email</label>
-        <input type="email" id="cad-email" placeholder="">
-
-        <button class="modal-btn" onclick="cadastrarCliente()">Enviar</button>
+            <button class="modal-btn" id="modal-cliente-btn" onclick="handleModalClienteBtn()">Enviar</button>
+        </div>
     </div>
-</div>
 
 {% endblock %}
 
