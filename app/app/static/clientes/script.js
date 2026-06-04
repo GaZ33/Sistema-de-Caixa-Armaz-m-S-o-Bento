@@ -177,6 +177,14 @@ $(document).ready(function () {
                 abrirModal('modal-cadastrar');
             });
         }
+    $list.on('dblclick', '.client-card', function () {
+    var id = $(this).find('button[data-action]').first().data('id');
+    console.log('dblclick id:', id);
+    if (id) {
+        window.location.href = '/clientes/' + id + '/contas';
+    }
+});
+
     });
 
     $search.on('input', window.refresh);

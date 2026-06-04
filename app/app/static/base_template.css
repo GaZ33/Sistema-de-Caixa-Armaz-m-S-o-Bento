@@ -436,6 +436,12 @@ body {
 }
 
 /* Home contas do dia */
+#home-contas {
+    width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
 .home-page {
     display: flex;
     flex-direction: column;
@@ -449,9 +455,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    max-width: 980px;
+    width: 600px;
     margin: 0 auto;
-    width: 100%;
 }
 
 .conta-card {
@@ -478,14 +483,16 @@ body {
 }
 
 .conta-info strong {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 800;
     color: #3a2a00;
+    text-align: left;
 }
 
 .conta-info span {
-    font-size: 13px;
+    font-size: 15px;
     color: #5a4000;
+    text-align: left;
 }
 
 .conta-status {

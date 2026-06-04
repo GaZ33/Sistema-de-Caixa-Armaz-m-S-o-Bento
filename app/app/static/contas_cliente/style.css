@@ -1,0 +1,54 @@
+.contas-cliente-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.contas-cliente-page .contas-list {
+    width: 600px;
+    margin: 0 auto;
+}
+
+.contas-cliente-page .conta-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.conta-card-acoes {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+.conta-card-acoes button {
+    padding: 6px 18px;
+    border-radius: 8px;
+    border: 1.5px solid #c9a000;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-finalizar {
+    background: #d4f5d4;
+    color: #1a6b1a;
+    border-color: #6bc46b !important;
+}
+
+.btn-finalizar:hover {
+    background: #b8e8b8;
+}
+
+.btn-cancelar {
+    background: #fce4e4;
+    color: #7a1515;
+    border-color: #e39b9b !important;
+}
+
+.btn-cancelar:hover {
+    background: #f5c8c8;
+}

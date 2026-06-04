@@ -26,3 +26,8 @@ def produtos():
 @login_required
 def clientes():
     return render_template('clientes/index.html')
+
+@pages_blueprint.route('/clientes/<int:cliente_id>/contas')
+@login_required
+def contas_cliente(cliente_id):
+    return render_template('contas_cliente/index.html', cliente_id=cliente_id)

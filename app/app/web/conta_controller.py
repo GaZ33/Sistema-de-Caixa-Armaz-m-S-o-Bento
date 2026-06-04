@@ -40,4 +40,10 @@ def create_conta_controller(service: ContaService):
         service.delete_conta(conta_id)
         return '', 204
 
+        @conta_blueprint.route('/contas/cliente/<int:cliente_id>', methods=['GET'])
+        def get_contas_by_cliente(cliente_id):
+            contas = service.get_all_contas()
+            contas_do_cliente = [c for c in contas if c.cliente == cliente_id]
+            return jsonify(models_to_dtos(contas_do_cliente))
+
     return conta_blueprint

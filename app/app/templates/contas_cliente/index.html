@@ -1,0 +1,61 @@
+{% extends 'base_template.html' %}
+{% block title %}Contas do Cliente{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="/static/contas_cliente/style.css">
+{% endblock %}
+
+{% block content %}
+<div class="app-wrapper">
+    <div class="main-area">
+        <header class="topbar">
+            <a href="/" class="topbar-btn">
+                <img src="/static/icones/Home.png" alt="Home">
+                HOME
+            </a>
+            <a href="/clientes/index.html" class="topbar-btn active">
+                <img src="/static/icones/Clientes.png" alt="Clientes">
+                CLIENTES
+            </a>
+            <a href="/produtos/index.html" class="topbar-btn">
+                <img src="/static/icones/Produto.png" alt="Produtos">
+                ESTOQUE
+            </a>
+            <div class="topbar-spacer"></div>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+                <button type="submit" class="topbar-btn topbar-action">
+                    <img src="/static/icones/Desligar.png" alt="Sair">
+                    Sair
+                </button>
+            </form>
+        </header>
+
+        <main class="page-content contas-cliente-page">
+            <h2 class="section-title" id="titulo-cliente">Contas do Cliente</h2>
+            <div class="contas-list" id="contas-cliente-list"></div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal Finalizar Conta -->
+<div class="modal-overlay" id="modal-finalizar-conta" onclick="fecharModal('modal-finalizar-conta')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-finalizar-conta')">✕</button>
+        <h2 class="modal-title">FORMA DE PAGAMENTO</h2>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+            <button class="modal-btn" onclick="finalizarContaCliente('dinheiro')">Dinheiro</button>
+            <button class="modal-btn" onclick="finalizarContaCliente('cartao_credito')">Cartão de Crédito</button>
+            <button class="modal-btn" onclick="finalizarContaCliente('cartao_debito')">Cartão de Débito</button>
+            <button class="modal-btn" onclick="finalizarContaCliente('pix')">PIX</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var clienteId = {{ cliente_id | tojson }};
+</script>
+<script src="/static/contas_cliente/script.js" defer></script>
+{% endblock %}

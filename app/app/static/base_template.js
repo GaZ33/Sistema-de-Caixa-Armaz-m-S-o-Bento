@@ -293,8 +293,7 @@ function renderizarContasDoDia(contas, userMap) {
 
         return '<div class="conta-card">' +
             '<div class="conta-info">' +
-                '<strong>Conta #' + c.id + '</strong>' +
-                '<span>Cliente: ' + cliente + '</span>' +
+                '<strong>' + cliente + '</strong>' +
                 '<span>Aberta às ' + hora + '</span>' +
                 '<span>Total: R$ ' + total + '</span>' +
             '</div>' +
