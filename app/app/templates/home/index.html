@@ -51,12 +51,18 @@
     </form>
 </header>
 
-<main class="page-content home-empty">
-    <div class="empty-state">
-        <img src="/static/icones/Gato.png" alt="Nenhuma operação">
-        <p class="empty-title">Nenhuma Operação<br>em Andamento</p>
-    </div>
-</main>
+    <main class="page-content home-page">
+        <!-- Estado vazio -->
+        <div class="empty-state" id="home-empty">
+            <img src="/static/icones/Gato.png" alt="Nenhuma operação">
+        </div>
+
+        <!-- Lista de contas do dia -->
+        <div id="home-contas" style="display:none;">
+            <h2 class="section-title">Contas do Dia</h2>
+            <div class="contas-list" id="contas-list"></div>
+        </div>
+    </main>
 
     </div>
 </div>
@@ -79,31 +85,7 @@
                     </tr>
                 </thead>
                 <tbody id="conta-itens">
-    <tr>
-        <td>Feijão Carioca</td>
-        <td>Zorzo</td>
-        <td>3</td>
-        <td>R$ 10,00</td>
-        <td>R$ 30,00</td>
-        <td><button class="action-btn"><img src="/static/icones/Lixosimbolo.png" alt="Remover"></button></td>
-    </tr>
-    <tr>
-        <td>Arroz 5Kg</td>
-        <td>Tietê</td>
-        <td>1</td>
-        <td>R$ 30,00</td>
-        <td>R$ 30,00</td>
-        <td><button class="action-btn"><img src="/static/icones/Lixosimbolo.png" alt="Remover"></button></td>
-    </tr>
-    <tr>
-        <td>Feijão Carioca</td>
-        <td>Zorzo</td>
-        <td>3</td>
-        <td>R$ 10,00</td>
-        <td>R$ 30,00</td>
-        <td><button class="action-btn"><img src="/static/icones/Lixosimbolo.png" alt="Remover"></button></td>
-    </tr>
-</tbody>
+        </tbody>
             </table>
         </div>
 

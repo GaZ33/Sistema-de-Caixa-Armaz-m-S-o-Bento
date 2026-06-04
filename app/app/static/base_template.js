@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-
+    iniciarHome();
 });
 
 function abrirModal(id) {
@@ -111,7 +111,7 @@ function buscarProdutoNaConta() {
         $.each(produtos, function (i, p) {
             var $btn = $('<button class="topbar-btn"></button>')
                 .css({ width: '100%', 'flex-direction': 'row', 'justify-content': 'flex-start', gap: '8px', height: 'auto', padding: '8px' })
-                .text(p.nome + ' â€” ' + p.marca + ' â€” R$ ' + Number(p.preco_unidade).toFixed(2))
+                .text(p.nome + ' - ' + p.marca + ' - R$ ' + Number(p.preco_unidade).toFixed(2))
                 .on('click', function () { selecionarProduto(p, $(this)); });
             $div.append($btn);
         });
@@ -127,7 +127,7 @@ function selecionarProduto(produto, $btn) {
 function confirmarAdicionarProduto() {
     if (!produtoSelecionado) return alert('Selecione um produto.');
     var quantidade = parseFloat($('#quantidade-produto').val());
-    if (!quantidade || quantidade <= 0) return alert('Informe uma quantidade vÃ¡lida.');
+    if (!quantidade || quantidade <= 0) return alert('Informe uma quantidade válida.');
 
     var preco_unitario = Number(produtoSelecionado.preco_unidade);
     var subtotal = preco_unitario * quantidade;
@@ -169,7 +169,7 @@ function renderClientesModal(users) {
     $.each(users, function (i, u) {
         var $btn = $('<button class="topbar-btn"></button>')
             .css({ width: '100%', 'flex-direction': 'row', 'justify-content': 'flex-start', gap: '8px', height: 'auto', padding: '8px' })
-            .text((u.nome || '') + ' ' + (u.sobrenome || '') + ' â€” @' + u.username)
+            .text((u.nome || '') + ' ' + (u.sobrenome || '') + ' - @' + u.username)
             .on('click', function () { confirmarClienteSelecionado(u, $(this)); });
         $div.append($btn);
     });
@@ -231,4 +231,76 @@ function cadastrarFuncionario() {
             alert(data.error || 'Falha ao cadastrar funcionário.');
         }
     });
+}
+
+/* ==================== CONTAS DO DIA (Home) ==================== */
+
+function iniciarHome() {
+    if (!$('#home-contas').length) return;
+    carregarContasDoDia();
+}
+
+function inicioDoDia() {
+    var agora = new Date();
+    var inicio = new Date(agora);
+
+    // dia começa às 4:30
+    if (agora.getHours() < 4 || (agora.getHours() === 4 && agora.getMinutes() < 30)) {
+        inicio.setDate(inicio.getDate() - 1);
+    }
+    inicio.setHours(4, 30, 0, 0);
+    return inicio;
+}
+
+function carregarContasDoDia() {
+    $.when(
+        $.getJSON('/api/contas'),
+        $.getJSON('/api/users')
+    ).done(function(contasRes, usersRes) {
+        var contas = contasRes[0];
+        var users  = usersRes[0];
+
+        var userMap = {};
+        users.forEach(function(u) {
+            userMap[u.id] = (u.nome || '') + (u.sobrenome ? ' ' + u.sobrenome : '');
+        });
+
+        var inicio = inicioDoDia();
+        var contasDoDia = $.grep(contas, function (c) {
+            return new Date(c.data_criacao) >= inicio;
+        });
+
+        if (!contasDoDia.length) {
+            $('#home-contas').hide();
+            return;
+        }
+
+        $('#home-contas').show();
+        renderizarContasDoDia(contasDoDia, userMap);
+    }).fail(function () {
+        $('#home-contas').hide();
+    });
+}
+
+function renderizarContasDoDia(contas, userMap) {
+    var html = $.map(contas, function (c) {
+        var status  = c.status === 'aberta' ? 'aberta' : 'fechada';
+        var label   = c.status === 'aberta' ? 'Aberta' : 'Fechada';
+        var total   = Number(c.valor_total || 0).toFixed(2).replace('.', ',');
+        var data    = new Date(c.data_criacao);
+        var hora    = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+        var cliente = c.cliente && userMap[c.cliente] ? userMap[c.cliente] : 'Não Informado';
+
+        return '<div class="conta-card">' +
+            '<div class="conta-info">' +
+                '<strong>Conta #' + c.id + '</strong>' +
+                '<span>Cliente: ' + cliente + '</span>' +
+                '<span>Aberta às ' + hora + '</span>' +
+                '<span>Total: R$ ' + total + '</span>' +
+            '</div>' +
+            '<span class="conta-status ' + status + '">' + label + '</span>' +
+        '</div>';
+    }).join('');
+
+    $('#contas-list').html(html);
 }

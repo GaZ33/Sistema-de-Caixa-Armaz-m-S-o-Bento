@@ -272,10 +272,17 @@ body {
 }
 
 .empty-state {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
+    pointer-events: none;
+    opacity: 0.25;
+    z-index: 0;
 }
 
 .empty-cat {
@@ -426,4 +433,81 @@ body {
     background-color: #ffe680;
     border-color: #a07800;
     box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+}
+
+/* Home contas do dia */
+.home-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    min-height: 100%;
+}
+
+.contas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 980px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.conta-card {
+    background-color: #fff8dc;
+    border: 1.5px solid #d9a800;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    gap: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    transition: box-shadow 0.15s;
+}
+
+.conta-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.conta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.conta-info strong {
+    font-size: 15px;
+    font-weight: 800;
+    color: #3a2a00;
+}
+
+.conta-info span {
+    font-size: 13px;
+    color: #5a4000;
+}
+
+.conta-status {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.conta-status.aberta {
+    background: #fff0b0;
+    color: #a07800;
+    border: 1px solid #d9a800;
+}
+
+.conta-status.fechada {
+    background: #d4f5d4;
+    color: #1a6b1a;
+    border: 1px solid #6bc46b;
+}
+
+.conta-tabela .action-btn {
+    background: none !important;
+    border: none !important;
 }
