@@ -150,6 +150,7 @@
 </div>
 
 <!-- Modal Forma de Pagamento -->
+<!-- Modal Forma de Pagamento -->
 <div class="modal-overlay" id="modal-pagamento" onclick="fecharModal('modal-pagamento')">
     <div class="modal-box" onclick="event.stopPropagation()">
         <button class="xmodal" onclick="fecharModal('modal-pagamento')">✕</button>
@@ -159,6 +160,9 @@
             <button class="modal-btn" onclick="confirmarPagamento('cartao_credito')">Cartão de Crédito</button>
             <button class="modal-btn" onclick="confirmarPagamento('cartao_debito')">Cartão de Débito</button>
             <button class="modal-btn" onclick="confirmarPagamento('pix')">PIX</button>
+            <button class="modal-btn" id="btn-pendurar" onclick="confirmarPagamento('pendurar')" style="display:none; background:#fff0b0; border-color:#d9a800; color:#7a5a00;">
+                Pendurar no Cliente
+            </button>
         </div>
     </div>
 </div>

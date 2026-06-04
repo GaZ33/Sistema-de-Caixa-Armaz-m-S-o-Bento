@@ -10,8 +10,10 @@ class SQLAlchemyContaRepository:
         return conta
 
     def delete(self, conta_id):
+        from app.models import ProdutoConta
         conta = self.get_by_id(conta_id)
         if conta:
+            ProdutoConta.query.filter_by(conta_id=conta_id).delete()
             db.session.delete(conta)
             db.session.commit()
 

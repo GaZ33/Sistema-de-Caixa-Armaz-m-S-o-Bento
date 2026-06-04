@@ -38,4 +38,16 @@ def create_produto_conta_controller(service: ProdutoContaService):
         service.delete_produto_conta(produto_conta_id)
         return '', 204
 
+    @produto_conta_blueprint.route('/produto_conta/conta/<int:conta_id>', methods=['GET'])
+    def get_produtos_by_conta(conta_id):
+        from app.models import Produto
+        itens = ProdutoConta.query.filter_by(conta_id=conta_id).all()
+        resultado = []
+        for item in itens:
+            produto = Produto.query.get(item.produto_id)
+            d = model_to_dto(item)
+            d['produto_nome'] = produto.nome if produto else None
+            resultado.append(d)
+        return jsonify(resultado)
+
     return produto_conta_blueprint

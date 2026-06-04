@@ -12,31 +12,26 @@ function fecharModal(id) {
 }
 
 function cadastrarCliente() {
-    var nome     = $('#cad-nome').val().trim();
+    var nome      = $('#cad-nome').val().trim();
     var sobrenome = $('#cad-sobrenome').val().trim();
 
-    if (!nome) {
-        alert('Nome é obrigatório.');
-        return;
-    }
+    if (!nome) { alert('Nome é obrigatório.'); return; }
 
-    /* Nickname gerado pelo nome duas vezes escrito em minúsculo*/
     var nomeFormatado = nome.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/\s+/g, '');
-        var username = nomeFormatado + nomeFormatado;
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '');
+    var username = nomeFormatado + nomeFormatado;
 
-        var dados = {
-            nome:      nome,
-            sobrenome: sobrenome || undefined,
-            cpf:       $('#cad-cpf').val().trim() || undefined,
-            telefone:  $('#cad-telefone').val().trim() || undefined,
-            email:     $('#cad-email').val().trim() || undefined,
-            username:  username,
-            senha:     nomeFormatado + nomeFormatado,
-            salt:      'default',
-            perfil_id: 3        // ← força a ser cliente (id3)
-        };
+    var dados = {
+        nome:      nome,
+        sobrenome: sobrenome || undefined,
+        cpf:       $('#cad-cpf').val().trim() || undefined,
+        telefone:  $('#cad-telefone').val().trim() || undefined,
+        email:     $('#cad-email').val().trim() || undefined,
+        username:  username,
+        senha:     nomeFormatado + nomeFormatado,
+        perfil_id: 3
+    };
 
     $.ajax({
         url: '/api/users',
@@ -101,45 +96,45 @@ $(document).ready(function () {
     var $list   = $('#client-list');
     var $search = $('#client-search');
 
-        function renderClients(clients) {
-            if (!clients.length) {
-                $list.html('<p class="empty-message">Nenhum cliente encontrado.</p>');
-                return;
-            }
-            var html = $.map(clients, function (c) {
-                return '<article class="client-card">' +
-                    '<div class="client-avatar"><img src="/static/icones/Login.png" alt="Cliente"></div>' +
-                    '<div class="client-info">' +
-                        '<strong>' + (c.nome || '') + ' ' + (c.sobrenome || '') + '</strong>' +
-                        '<span>Usuário: ' + (c.username || '-') + '</span>' +
-                        '<span>Telefone: ' + (c.telefone || '-') + '</span>' +
-                    '</div>' +
-                    '<div class="client-actions">' +
-                        '<button class="action-btn" data-action="edit" data-id="' + c.id + '" title="Editar">' +
-                            '<img src="/static/icones/EditarSimbolo.png" alt="Editar"></button>' +
-                        '<button class="action-btn" data-action="delete" data-id="' + c.id + '" title="Excluir">' +
-                            '<img src="/static/icones/Lixosimbolo.png" alt="Excluir"></button>' +
-                    '</div>' +
-                '</article>';
-            }).join('');
-            $list.html(html);
+    function renderClients(clients) {
+        if (!clients.length) {
+            $list.html('<p class="empty-message">Nenhum cliente encontrado.</p>');
+            return;
         }
+        var html = $.map(clients, function (c) {
+            return '<article class="client-card" style="cursor:pointer;">' +
+                '<div class="client-avatar"><img src="/static/icones/Login.png" alt="Cliente"></div>' +
+                '<div class="client-info" data-id="' + c.id + '">' +
+                    '<strong>' + (c.nome || '') + ' ' + (c.sobrenome || '') + '</strong>' +
+                    '<span>Usuário: ' + (c.username || '-') + '</span>' +
+                    '<span>Telefone: ' + (c.telefone || '-') + '</span>' +
+                '</div>' +
+                '<div class="client-actions">' +
+                    '<button class="action-btn" data-action="edit" data-id="' + c.id + '" title="Editar">' +
+                        '<img src="/static/icones/EditarSimbolo.png" alt="Editar"></button>' +
+                    '<button class="action-btn" data-action="delete" data-id="' + c.id + '" title="Excluir">' +
+                        '<img src="/static/icones/Lixosimbolo.png" alt="Excluir"></button>' +
+                '</div>' +
+            '</article>';
+        }).join('');
+        $list.html(html);
+    }
 
     window.refresh = function () {
         $.ajax({
             url: '/api/users',
             method: 'GET',
             dataType: 'json',
-                success: function (clients) {
-                    var term = $search.val().trim().toLowerCase();
-                    var filtered = $.grep(clients, function (c) {
-                        if (c.perfil_id !== 3) return false;  // ← só clientes
-                        var searchable = [c.nome, c.sobrenome, c.username, c.email, c.cpf]
-                            .filter(Boolean).join(' ').toLowerCase();
-                        return !term || searchable.indexOf(term) !== -1;
-                    });
-                    renderClients(filtered);
-                },
+            success: function (clients) {
+                var term = $search.val().trim().toLowerCase();
+                var filtered = $.grep(clients, function (c) {
+                    if (c.perfil_id !== 3) return false;
+                    var searchable = [c.nome, c.sobrenome, c.username, c.email, c.cpf]
+                        .filter(Boolean).join(' ').toLowerCase();
+                    return !term || searchable.indexOf(term) !== -1;
+                });
+                renderClients(filtered);
+            },
             error: function () {
                 $list.html('<p class="empty-message">Não foi possível carregar os clientes.</p>');
             }
@@ -155,12 +150,8 @@ $(document).ready(function () {
             $.ajax({
                 url: '/api/users/' + id,
                 method: 'DELETE',
-                success: function () {
-                    window.refresh();
-                },
-                error: function () {
-                    alert('Falha ao excluir o cliente.');
-                }
+                success: function () { window.refresh(); },
+                error: function () { alert('Falha ao excluir o cliente.'); }
             });
         }
 
@@ -177,14 +168,13 @@ $(document).ready(function () {
                 abrirModal('modal-cadastrar');
             });
         }
-    $list.on('dblclick', '.client-card', function () {
-    var id = $(this).find('button[data-action]').first().data('id');
-    console.log('dblclick id:', id);
-    if (id) {
-        window.location.href = '/clientes/' + id + '/contas';
-    }
-});
+    });
 
+    $list.on('dblclick', '.client-card', function () {
+        var id = $(this).find('.client-info').data('id');
+        if (id) {
+            window.location.href = '/clientes/' + id + '/contas';
+        }
     });
 
     $search.on('input', window.refresh);

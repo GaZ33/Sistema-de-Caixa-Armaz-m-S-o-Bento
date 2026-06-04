@@ -40,12 +40,13 @@ def finalizar_venda():
     itens_criados = []
 
     try:
+        pendurar = payload.get('pendurar', False)
         conta = Conta(
             funcionario=current_user.id,
             cliente=cliente_id,
             data_criacao=datetime.now(UTC),
-            data_fechamento=datetime.now(UTC),
-            status='fechada',
+            data_fechamento=None if pendurar else datetime.now(UTC),
+            status='aberta' if pendurar else 'fechada',
             valor_total=total,
         )
         db.session.add(conta)

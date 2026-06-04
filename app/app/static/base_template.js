@@ -62,6 +62,13 @@ function finalizarConta() {
         alert('Adicione pelo menos um produto antes de finalizar.');
         return;
     }
+
+    if (clienteSelecionadoId) {
+        $('#btn-pendurar').show();
+    } else {
+        $('#btn-pendurar').hide();
+    }
+
     abrirModal('modal-pagamento');
 }
 
@@ -70,23 +77,32 @@ function confirmarPagamento(formaPagamento) {
         return { id: item.id, qtd: item.quantidade };
     });
 
+    var payload = {
+        carrinho: carrinho,
+        forma_pagamento: formaPagamento === 'pendurar' ? null : formaPagamento,
+        cliente_id: clienteSelecionadoId,
+        pendurar: formaPagamento === 'pendurar'
+    };
+
     $.ajax({
         url: '/api/venda/finalizar',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({
-            carrinho: carrinho,
-            forma_pagamento: formaPagamento,
-            cliente_id: clienteSelecionadoId
-        }),
+        data: JSON.stringify(payload),
         dataType: 'json',
         success: function () {
-            alert('Venda finalizada com sucesso!');
+            if (formaPagamento === 'pendurar') {
+                alert('Conta pendura no cliente com sucesso!');
+            } else {
+                alert('Venda finalizada com sucesso!');
+            }
             carrinhoLocal = [];
             clienteSelecionadoId = null;
             $('#cliente-selecionado-label').text('');
+            $('#btn-pendurar').hide();
             fecharModal('modal-pagamento');
             fecharModal('modal-nova-conta');
+            carregarContasDoDia();
         },
         error: function (xhr) {
             var data = xhr.responseJSON || {};

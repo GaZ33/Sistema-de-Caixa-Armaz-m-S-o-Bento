@@ -518,3 +518,8 @@ body {
     background: none !important;
     border: none !important;
 }
+
+#home-contas {
+    position: relative;
+    z-index: 1;
+}
