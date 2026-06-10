@@ -54,6 +54,9 @@ function removerItem(index) {
     atualizarTabela();
 }
 
+window.alterarQuantidade = alterarQuantidade;
+window.removerItem = removerItem;
+
 let tabelaProdutos;
 
 function configurarModalDataTables() {

@@ -1,4 +1,4 @@
-﻿var editingId = null;
+var editingId = null;
 
 $(document).ready(function () {
 
@@ -31,13 +31,22 @@ $(document).ready(function () {
         setFeedback('');
     }
 
-    function fillForm(produto) {
+    function fillForm(produto, estoque) {
         editingId = produto.id;
         $('#cad-prod-nome').val(produto.nome || '');
         $('#cad-prod-codigo').val(produto.codigo || '');
         $('#cad-prod-marca').val(produto.marca || '');
         $('#cad-prod-preco').val(produto.preco_unidade || '');
         $('#cad-prod-unidade').val(produto.unidade || '');
+        if (estoque) {
+            $('#cad-prod-quantidade').val(estoque.quantidade_atual);
+            $('#cad-prod-quantidade-min').val(estoque.quantidade_minima);
+            $('#cad-prod-quantidade').data('estoque-id', estoque.id);
+        } else {
+            $('#cad-prod-quantidade').val(0);
+            $('#cad-prod-quantidade-min').val(0);
+            $('#cad-prod-quantidade').removeData('estoque-id');
+        }
         $('#modal-cadastrar-produto .modal-title').text('ALTERAR PRODUTO');
         $('#modal-prod-btn').data('editing', produto.id);
     }
@@ -109,8 +118,11 @@ $(document).ready(function () {
 
         if (action === 'edit') {
             $.getJSON('/api/produtos/' + id, function (produto) {
-                fillForm(produto);
-                abrirModal('modal-cadastrar-produto');
+                $.getJSON('/api/estoque', function (estoques) {
+                    var estoque = estoques.find(function(e) { return e.produto_id === produto.id; });
+                    fillForm(produto, estoque);
+                    abrirModal('modal-cadastrar-produto');
+                });
             });
         }
     });
@@ -135,9 +147,10 @@ function fecharModal(id) {
     $('#modal-cadastrar-produto .modal-title').text('CADASTRAR PRODUTO');
     $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
     $('#cad-prod-unidade').val('');
+    $('#cad-prod-quantidade, #cad-prod-quantidade-min').val('');
+    $('#cad-prod-quantidade').removeData('estoque-id');
     $('#modal-prod-btn').removeData('editing');
     editingId = null;
-
 }
 
 function cadastrarProduto() {
@@ -203,14 +216,54 @@ function atualizarProduto() {
         return;
     }
 
+    var qty = parseFloat($('#cad-prod-quantidade').val()) || 0;
+    var minQty = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
+    var estoqueId = $('#cad-prod-quantidade').data('estoque-id');
+
     $.ajax({
         url: '/api/produtos/' + editingId,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(dados),
         success: function () {
-            fecharModal('modal-cadastrar-produto');
-            refreshProducts('');
+            if (estoqueId) {
+                // Update existing estoque record
+                $.ajax({
+                    url: '/api/estoque/' + estoqueId,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        quantidade_atual: qty,
+                        quantidade_minima: minQty
+                    }),
+                    success: function() {
+                        fecharModal('modal-cadastrar-produto');
+                        refreshProducts('');
+                    },
+                    error: function() {
+                        alert('Produto atualizado, mas erro ao atualizar o estoque.');
+                    }
+                });
+            } else {
+                // Create new estoque record
+                $.ajax({
+                    url: '/api/estoque',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        produto_id: editingId,
+                        quantidade_atual: qty,
+                        quantidade_minima: minQty
+                    }),
+                    success: function() {
+                        fecharModal('modal-cadastrar-produto');
+                        refreshProducts('');
+                    },
+                    error: function() {
+                        alert('Produto atualizado, mas erro ao registrar estoque.');
+                    }
+                });
+            }
         },
         error: function (xhr) {
             alert('Erro ao atualizar produto: ' + xhr.responseText);
@@ -240,8 +293,9 @@ function gerarRelatorioEstoque() {
         });
 
         var baixos = estoques.filter(function(e) {
-            return e.quantidade_minima !== null &&
-                   e.quantidade_atual <= e.quantidade_minima;
+            var min = parseFloat(e.quantidade_minima);
+            var atual = parseFloat(e.quantidade_atual);
+            return !isNaN(min) && !isNaN(atual) && atual <= min;
         });
 
         if (!baixos.length) {

@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 
 from app import db
-from app.models import Conta, Produto, ProdutoConta
+from app.models import Conta, Produto, ProdutoConta, Estoque, LogEstoque
 from app.web.dto import model_to_dto, models_to_dtos
 
 venda_blueprint = Blueprint('venda', __name__)
@@ -62,6 +62,30 @@ def finalizar_venda():
             )
             db.session.add(produto_conta)
             itens_criados.append(produto_conta)
+
+            # Baixa no estoque
+            estoque = Estoque.query.filter_by(produto_id=produto.id).first()
+            if estoque:
+                estoque.quantidade_atual -= quantidade
+                estoque.data_alteracao = datetime.now(UTC)
+            else:
+                estoque = Estoque(
+                    produto_id=produto.id,
+                    quantidade_atual=-quantidade,
+                    quantidade_minima=0.0,
+                    data_alteracao=datetime.now(UTC)
+                )
+                db.session.add(estoque)
+                db.session.flush()
+
+            # Registrar a movimentação de saída
+            log_estoque = LogEstoque(
+                estoque_id=estoque.id,
+                movimentacao='saida',
+                quantidade=quantidade,
+                motivo='venda'
+            )
+            db.session.add(log_estoque)
 
         db.session.commit()
     except Exception:

@@ -422,7 +422,8 @@ body {
     margin-left: 0;
 }
 
-.nav-group:hover .nav-sub {
+.nav-group:hover .nav-sub,
+.nav-sub.pinned {
     max-width: 600px;
     opacity: 1;
     margin-left: 10px;
@@ -522,4 +523,144 @@ body {
 #home-contas {
     position: relative;
     z-index: 1;
+}
+
+/* ==========================================================================
+   DATATABLES STYLING (GLOBAL MATCH)
+   ========================================================================== */
+.dataTables_wrapper,
+.dt-container {
+    font-family: inherit;
+    color: #3a2a00;
+}
+
+/* Table headers */
+table.dataTable thead th,
+.table thead th,
+table.dataTable thead tr th {
+    background-color: #f0b800 !important;
+    color: #3a2a00 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #d9a800 !important;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 12px 10px !important;
+    vertical-align: middle;
+}
+
+/* Table body and rows */
+.table tbody tr,
+table.dataTable tbody tr {
+    background-color: #fff8dc !important;
+    color: #3a2a00 !important;
+    border-bottom: 1px solid #e8d080 !important;
+}
+
+/* Zebra striping */
+.table-striped > tbody > tr:nth-of-type(odd),
+table.dataTable.table-striped > tbody > tr:nth-of-type(odd),
+table.dataTable.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fffbe8 !important;
+    color: #3a2a00 !important;
+}
+
+/* Hover effects */
+.table-hover > tbody > tr:hover,
+table.dataTable.table-hover > tbody > tr:hover,
+table.dataTable.table-hover tbody tr:hover {
+    background-color: #ffe680 !important;
+    color: #3a2a00 !important;
+}
+
+/* Input controls: search box */
+.dataTables_filter input,
+.dataTables_filter .form-control,
+.dt-search input,
+.dt-container .dt-input {
+    background-color: #fffbe8 !important;
+    border: 1.5px solid #d9a800 !important;
+    border-radius: 8px !important;
+    color: #3a2a00 !important;
+    font-size: 14px;
+    padding: 6px 12px !important;
+    outline: none;
+    box-shadow: none !important;
+}
+.dataTables_filter input:focus,
+.dataTables_filter .form-control:focus,
+.dt-search input:focus,
+.dt-container .dt-input:focus {
+    border-color: #a07800 !important;
+    background-color: #fffbe8 !important;
+}
+
+/* Select length controls */
+.dataTables_length select,
+.dataTables_length .form-select,
+.dt-length select {
+    background-color: #fffbe8 !important;
+    border: 1.5px solid #d9a800 !important;
+    border-radius: 8px !important;
+    color: #3a2a00 !important;
+    font-size: 14px;
+    padding: 6px 24px 6px 12px !important;
+    outline: none;
+    box-shadow: none !important;
+}
+.dataTables_length select:focus,
+.dataTables_length .form-select:focus,
+.dt-length select:focus {
+    border-color: #a07800 !important;
+}
+
+/* Pagination styling (Bootstrap and Default DataTables 2) */
+.pagination .page-item .page-link,
+.dt-paging .dt-paging-button {
+    background-color: #fff8dc !important;
+    border: 1.5px solid #c9a000 !important;
+    color: #3a2a00 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 6px 12px !important;
+    margin: 0 2px !important;
+    border-radius: 6px !important;
+    transition: background 0.15s, border-color 0.15s;
+    box-shadow: none !important;
+    display: inline-block;
+    text-decoration: none;
+}
+.pagination .page-item:hover .page-link,
+.dt-paging .dt-paging-button:hover {
+    background-color: #ffe680 !important;
+    border-color: #a07800 !important;
+    color: #3a2a00 !important;
+}
+.pagination .page-item.active .page-link,
+.dt-paging .dt-paging-button.current,
+.dt-paging .dt-paging-button.current:hover {
+    background: #f0b800 !important;
+    border-color: #a07800 !important;
+    color: #3a2a00 !important;
+}
+.pagination .page-item.disabled .page-link,
+.dt-paging .dt-paging-button.disabled,
+.dt-paging .dt-paging-button.disabled:hover {
+    background-color: #f5f0d5 !important;
+    border-color: #e6d0a0 !important;
+    color: #a09070 !important;
+    opacity: 0.6;
+    cursor: not-allowed !important;
+}
+
+/* Info and general labels */
+.dataTables_info,
+.dataTables_length label,
+.dataTables_filter label,
+.dt-info,
+.dt-length label,
+.dt-search label {
+    color: #5a4000 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
 }

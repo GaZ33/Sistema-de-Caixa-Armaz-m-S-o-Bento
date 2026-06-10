@@ -38,16 +38,12 @@
                     <img src="/static/icones/Home.png" alt="Home">
                     HOME
                 </a>
-                <div class="nav-sub">
-                    <a onclick="handleNavAction('home', 'nova-conta')" class="topbar-btn" style="cursor:pointer;">
-                        <img src="/static/icones/Adicionar.png" alt="Nova Conta">
-                        NOVA CONTA
-                    </a>
-                    <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
-                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
-                        NOVO FUNCIONÁRIO
-                    </a>
-                </div>
+        <div class="nav-sub">
+            <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
+                <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
+                NOVO FUNCIONÁRIO
+            </a>
+        </div>
             </div>
             <div class="nav-group">
                 <a href="/ponto-de-venda/index.html" class="topbar-btn">
@@ -119,16 +115,54 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Cliente</th>
                     <th>Status</th>
                     <th>Data de Criação</th>
                     <th>Data de Fechamento</th>
                     <th>Total (R$)</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Preenchido via DataTables -->
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Modal Detalhes da Venda -->
+<div class="modal-overlay modal-grande" id="modal-detalhes-venda" onclick="fecharModal('modal-detalhes-venda')">
+    <div class="modal-box modal-box-grande" onclick="event.stopPropagation()">
+        <button class="xmodal" onclick="fecharModal('modal-detalhes-venda')">✕</button>
+        <img src="/static/icones/Sim.png" alt="Detalhes" class="modal-icon" style="width: 50px; height: 50px;">
+        <h2 class="modal-title">DETALHES DA COMPRA #<span id="detalhe-id"></span></h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 14px; color: #3a2a00;">
+            <div><strong>Cliente:</strong> <span id="detalhe-cliente"></span></div>
+            <div><strong>Status:</strong> <span id="detalhe-status"></span></div>
+            <div><strong>Data de Criação:</strong> <span id="detalhe-criacao"></span></div>
+            <div><strong>Data de Fechamento:</strong> <span id="detalhe-fechamento"></span></div>
+        </div>
+
+        <div class="conta-tabela-wrapper">
+            <table class="conta-tabela" id="tabela-detalhes-itens">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quant.</th>
+                        <th>Preço Unit.</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Preenchido via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="conta-total" style="font-size: 24px; padding-top: 10px;">
+            Total: R$ <span id="detalhe-total">0,00</span>
+        </div>
     </div>
 </div>
 {% endblock %}

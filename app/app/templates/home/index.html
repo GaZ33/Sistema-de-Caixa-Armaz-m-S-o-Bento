@@ -15,11 +15,7 @@
             <img src="/static/icones/Home.png" alt="Home">
             HOME
         </a>
-        <div class="nav-sub">
-            <a onclick="handleNavAction('home', 'nova-conta')" class="topbar-btn" style="cursor:pointer;">
-                <img src="/static/icones/Adicionar.png" alt="Nova Conta">
-                NOVA CONTA
-            </a>
+        <div class="nav-sub pinned">
             <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
                 <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
                 NOVO FUNCIONÁRIO
@@ -100,106 +96,6 @@
         </div>
     </main>
 
-    </div>
-</div>
-<!-- Modal Nova Conta -->
-<div class="modal-overlay modal-grande" id="modal-nova-conta" onclick="fecharModal('modal-nova-conta')">
-    <div class="modal-box modal-box-grande" onclick="event.stopPropagation()">
-        <button class="xmodal" onclick="fecharModal('modal-nova-conta')">✕</button>
-        <h2 class="modal-title">NOVA CONTA</h2>
-
-        <div class="conta-tabela-wrapper">
-            <table class="conta-tabela">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Marca</th>
-                        <th>Quant.</th>
-                        <th>Preço Unit.</th>
-                        <th>Sub Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="conta-itens">
-        </tbody>
-            </table>
-        </div>
-
-        <div class="conta-total">
-            Total: <span id="conta-valor-total">0,00</span>
-        </div>
-
-        <div class="conta-acoes">
-    <button class="topbar-btn" onclick="abrirModal('modal-adicionar-produto')">
-        <img src="/static/icones/Produto.png" alt="Adicionar Produto">
-        ADICIONAR PRODUTO
-    </button>
-            <button class="topbar-btn" onclick="adicionarACliente()">
-                <img src="/static/icones/Clientes.png" alt="Adicionar a Cliente">
-                ADICIONAR A CLIENTE
-            </button>
-            <button class="topbar-btn" onclick="cancelarConta()">
-                <img src="/static/icones/não.png" alt="Cancelar Conta">
-                CANCELAR CONTA
-            </button>
-            <button class="topbar-btn" onclick="finalizarConta()">
-                <img src="/static/icones/Sim.png" alt="Finalizar Conta">
-                FINALIZAR CONTA
-            </button>
-        </div>
-        <div class="conta-cliente-info">
-            <span id="cliente-selecionado-label" style="font-size:0.9rem; color:#555;"></span>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Adicionar Produto à Conta -->
-<div class="modal-overlay" id="modal-adicionar-produto" onclick="fecharModal('modal-adicionar-produto')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <button class="xmodal" onclick="fecharModal('modal-adicionar-produto')">✕</button>
-        <img src="/static/icones/Produto.png" alt="Produto" class="modal-icon">
-        <h2 class="modal-title">ADICIONAR PRODUTO</h2>
-
-        <label>Nome do Produto</label>
-        <input type="text" id="busca-produto" placeholder="Digite para buscar..." oninput="buscarProdutoNaConta()">
-
-        <div id="resultado-busca" style="display:flex; flex-direction:column; gap:3px;"></div>
-
-        <label style="margin-top:12px;">Quantidade</label>
-        <input type="number" id="quantidade-produto" value="1" min="1">
-
-        <button class="modal-btn" onclick="confirmarAdicionarProduto()">Adicionar</button>
-    </div>
-</div>
-
-<!-- Modal Selecionar Cliente -->
-<div class="modal-overlay" id="modal-selecionar-cliente" onclick="fecharModal('modal-selecionar-cliente')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <button class="xmodal" onclick="fecharModal('modal-selecionar-cliente')">✕</button>
-        <img src="/static/icones/Clientes.png" alt="Cliente" class="modal-icon">
-        <h2 class="modal-title">SELECIONAR CLIENTE</h2>
-        <input type="search" id="busca-cliente-modal" placeholder="Buscar por nome ou usuário..."
-               oninput="filtrarClientesModal()" style="width:100%; margin-bottom:10px;">
-        <div id="resultado-clientes"
-             style="display:flex; flex-direction:column; gap:3px; max-height:240px; overflow-y:auto;"></div>
-    </div>
-</div>
-
-<!-- Modal Forma de Pagamento -->
-<!-- Modal Forma de Pagamento -->
-<div class="modal-overlay" id="modal-pagamento" onclick="fecharModal('modal-pagamento')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <button class="xmodal" onclick="fecharModal('modal-pagamento')">✕</button>
-        <h2 class="modal-title">FORMA DE PAGAMENTO</h2>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-            <button class="modal-btn" onclick="confirmarPagamento('dinheiro')">Dinheiro</button>
-            <button class="modal-btn" onclick="confirmarPagamento('cartao_credito')">Cartão de Crédito</button>
-            <button class="modal-btn" onclick="confirmarPagamento('cartao_debito')">Cartão de Débito</button>
-            <button class="modal-btn" onclick="confirmarPagamento('pix')">PIX</button>
-            <button class="modal-btn" id="btn-pendurar" onclick="confirmarPagamento('pendurar')" style="display:none; background:#fff0b0; border-color:#d9a800; color:#7a5a00;">
-                Pendurar no Cliente
-            </button>
-        </div>
     </div>
 </div>
 

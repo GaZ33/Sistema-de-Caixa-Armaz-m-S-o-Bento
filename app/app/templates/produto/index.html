@@ -14,16 +14,12 @@
                     <img src="/static/icones/Home.png" alt="Home">
                     HOME
                 </a>
-                <div class="nav-sub">
-                    <a onclick="handleNavAction('home', 'nova-conta')" class="topbar-btn" style="cursor:pointer;">
-                        <img src="/static/icones/Adicionar.png" alt="Nova Conta">
-                        NOVA CONTA
-                    </a>
-                    <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
-                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
-                        NOVO FUNCIONÁRIO
-                    </a>
-                </div>
+        <div class="nav-sub">
+            <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
+                <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
+                NOVO FUNCIONÁRIO
+            </a>
+        </div>
             </div>
             <div class="nav-group">
                 <a href="/ponto-de-venda/index.html" class="topbar-btn">
@@ -58,7 +54,7 @@
                     <img src="/static/icones/Produto.png" alt="Produtos">
                     ESTOQUE
                 </a>
-                <div class="nav-sub">
+                <div class="nav-sub pinned">
                     <a onclick="handleNavAction('produtos', 'cadastrar-produto')" class="topbar-btn" style="cursor:pointer;">
                         <img src="/static/icones/Adicionar.png" alt="Cadastrar Produto">
                         CADASTRAR PRODUTO
