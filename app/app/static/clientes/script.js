@@ -1,4 +1,4 @@
-﻿function abrirModal(id) {
+function abrirModal(id) {
     $('#' + id).addClass('aberto');
 }
 
@@ -56,8 +56,7 @@ function atualizarCliente(id) {
         sobrenome: $('#cad-sobrenome').val().trim() || undefined,
         cpf:       $('#cad-cpf').val().trim() || undefined,
         telefone:  $('#cad-telefone').val().trim() || undefined,
-        email:     $('#cad-email').val().trim() || undefined,
-        username:  $('#cad-username').val().trim()
+        email:     $('#cad-email').val().trim() || undefined
     };
 
     $.ajax({
