@@ -9,19 +9,75 @@
 <div class="app-wrapper">
     <div class="main-area">
         <header class="topbar">
-            <a href="/" class="topbar-btn">
-                <img src="/static/icones/Home.png" alt="Home">
-                HOME
-            </a>
-            <a href="/clientes/index.html" class="topbar-btn active">
-                <img src="/static/icones/Clientes.png" alt="Clientes">
-                CLIENTES
-            </a>
-            <a href="/produtos/index.html" class="topbar-btn">
-                <img src="/static/icones/Produto.png" alt="Produtos">
-                ESTOQUE
-            </a>
+            <div class="nav-group">
+                <a href="/" class="topbar-btn">
+                    <img src="/static/icones/Home.png" alt="Home">
+                    HOME
+                </a>
+                <div class="nav-sub">
+                    <a onclick="handleNavAction('home', 'nova-conta')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Nova Conta">
+                        NOVA CONTA
+                    </a>
+                    <a onclick="handleNavAction('home', 'cadastrar-funcionario')" class="topbar-btn" id="cadastrar-funcionario" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Funcionário">
+                        NOVO FUNCIONÁRIO
+                    </a>
+                </div>
+            </div>
+            <div class="nav-group">
+                <a href="/ponto-de-venda/index.html" class="topbar-btn">
+                    <img src="/static/icones/Sim.png" alt="PDV">
+                    PDV
+                </a>
+            </div>
+    <div class="nav-group">
+        <a href="/vendas/index.html" class="topbar-btn">
+            <img src="/static/icones/Sim.png" alt="Vendas">
+            VENDAS
+        </a>
+    </div>
+            <div class="nav-group">
+                <a href="/clientes/index.html" class="topbar-btn active">
+                    <img src="/static/icones/Clientes.png" alt="Clientes">
+                    CLIENTES
+                </a>
+                <div class="nav-sub">
+                    <a onclick="handleNavAction('clientes', 'cadastrar-cliente')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Cliente">
+                        CADASTRAR CLIENTE
+                    </a>
+                    <a onclick="handleNavAction('clientes', 'procurar-cadastro')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/ProcurarCadastro.png" alt="Procurar">
+                        PROCURAR CADASTRO
+                    </a>
+                </div>
+            </div>
+            <div class="nav-group">
+                <a href="/produtos/index.html" class="topbar-btn">
+                    <img src="/static/icones/Produto.png" alt="Produtos">
+                    ESTOQUE
+                </a>
+                <div class="nav-sub">
+                    <a onclick="handleNavAction('produtos', 'cadastrar-produto')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/Adicionar.png" alt="Cadastrar Produto">
+                        CADASTRAR PRODUTO
+                    </a>
+                    <a onclick="handleNavAction('produtos', 'procurar-produto')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/ProcurarProduto.png" alt="Procurar Produto">
+                        PROCURAR PRODUTO
+                    </a>
+                    <a onclick="handleNavAction('produtos', 'estoque-baixo')" class="topbar-btn" style="cursor:pointer;">
+                        <img src="/static/icones/olho.png" alt="Estoque Baixo">
+                        ESTOQUE BAIXO
+                    </a>
+                </div>
+            </div>
             <div class="topbar-spacer"></div>
+            <a href="#" class="topbar-btn" title="Usuario autenticado">
+                <img src="/static/icones/Login.png" alt="Perfil">
+                {{ current_user.username }}
+            </a>
             <form method="post" action="{{ url_for('auth.logout') }}">
                 <button type="submit" class="topbar-btn topbar-action">
                     <img src="/static/icones/Desligar.png" alt="Sair">

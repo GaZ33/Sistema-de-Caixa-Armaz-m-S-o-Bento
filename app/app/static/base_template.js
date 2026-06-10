@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
     iniciarHome();
 });
 
@@ -319,3 +319,64 @@ function renderizarContasDoDia(contas, userMap) {
 
     $('#contas-list').html(html);
 }
+
+/* ==================== GLOBAL NAVIGATION ACTIONS ==================== */
+
+function handleNavAction(targetPage, action) {
+    var currentPath = window.location.pathname;
+    var targetUrl = "/";
+    if (targetPage === "clientes") {
+        targetUrl = "/clientes/index.html";
+    } else if (targetPage === "produtos") {
+        targetUrl = "/produtos/index.html";
+    }
+
+    var isOnPage = false;
+    if (targetPage === "home" && (currentPath === "/" || currentPath === "")) {
+        isOnPage = true;
+    } else if (targetPage === "clientes" && currentPath.indexOf("/clientes/index.html") !== -1) {
+        isOnPage = true;
+    } else if (targetPage === "produtos" && currentPath.indexOf("/produtos/index.html") !== -1) {
+        isOnPage = true;
+    }
+
+    if (isOnPage) {
+        triggerAction(action);
+    } else {
+        window.location.href = targetUrl + "#action=" + action;
+    }
+}
+
+function triggerAction(action) {
+    if (action === "nova-conta") {
+        abrirModal('modal-nova-conta');
+    } else if (action === "cadastrar-funcionario") {
+        abrirModal('modal-cadastrar-funcionario');
+    } else if (action === "cadastrar-cliente") {
+        abrirModal('modal-cadastrar');
+    } else if (action === "procurar-cadastro") {
+        if (typeof toggleBuscaCliente === 'function') {
+            toggleBuscaCliente();
+        }
+    } else if (action === "cadastrar-produto") {
+        abrirModal('modal-cadastrar-produto');
+    } else if (action === "procurar-produto") {
+        if (typeof toggleBuscaProduto === 'function') {
+            toggleBuscaProduto();
+        }
+    } else if (action === "estoque-baixo") {
+        if (typeof gerarRelatorioEstoque === 'function') {
+            gerarRelatorioEstoque();
+        }
+    }
+}
+
+$(document).ready(function() {
+    if (window.location.hash && window.location.hash.indexOf("#action=") === 0) {
+        var action = window.location.hash.split("=")[1];
+        window.location.hash = "";
+        setTimeout(function() {
+            triggerAction(action);
+        }, 150);
+    }
+});

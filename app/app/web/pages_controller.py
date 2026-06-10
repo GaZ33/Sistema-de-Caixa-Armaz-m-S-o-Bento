@@ -31,3 +31,8 @@ def clientes():
 @login_required
 def contas_cliente(cliente_id):
     return render_template('contas_cliente/index.html', cliente_id=cliente_id)
+
+@pages_blueprint.route('/vendas/index.html')
+@login_required
+def vendas():
+    return render_template('vendas/index.html')

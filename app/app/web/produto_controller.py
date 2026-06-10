@@ -41,7 +41,9 @@ def create_produto_controller(service: ProdutoService):
     @produto_blueprint.route('/produtos/buscar', methods=['GET'])
     def buscar_produtos():
         query = request.args.get('query', '')
+        print(f"[BACKEND] Buscando produtos com a query: '{query}'", flush=True)
         produtos = service.buscar_produtos(query)
+        print(f"[BACKEND] Encontrados {len(produtos)} produtos.", flush=True)
         return jsonify(models_to_dtos(produtos))
 
     return produto_blueprint
