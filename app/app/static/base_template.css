@@ -422,7 +422,6 @@ body {
     margin-left: 0;
 }
 
-.nav-group:hover .nav-sub,
 .nav-sub.pinned {
     max-width: 600px;
     opacity: 1;
