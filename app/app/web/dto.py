@@ -7,7 +7,11 @@ def serialize_value(value):
     if isinstance(value, Decimal):
         return float(value)
 
-    if isinstance(value, (datetime, date)):
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value.isoformat() + 'Z'
+        return value.isoformat()
+    elif isinstance(value, date):
         return value.isoformat()
 
     if isinstance(value, Enum):

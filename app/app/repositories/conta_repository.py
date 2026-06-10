@@ -26,6 +26,10 @@ class SQLAlchemyContaRepository:
     def update(self, conta_id, data):
         conta = self.get_by_id(conta_id)
         if conta:
+            if data.get('status') == 'fechada' and conta.status != 'fechada':
+                from datetime import datetime, UTC
+                data = dict(data)
+                data['data_fechamento'] = datetime.now(UTC)
             for key, value in data.items():
                 setattr(conta, key, value)
             db.session.commit()

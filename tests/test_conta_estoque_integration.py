@@ -39,6 +39,7 @@ def test_contas_crud_flow(client, auth_user):
     updated_conta = update_response.get_json()
     assert updated_conta['status'] == 'fechada'
     assert float(updated_conta['valor_total']) == 32.0
+    assert updated_conta['data_fechamento'] is not None
 
     delete_response = client.delete(f'/api/contas/{conta_id}')
     assert delete_response.status_code == 204

@@ -1,21 +1,220 @@
 var editingId = null;
 
-$(document).ready(function () {
+function abrirModal(id) {
+    $('#' + id).addClass('aberto');
+}
 
-    var $form        = $('#product-form');
-    var $feedback    = $('#product-form-feedback');
-    var $formTitle   = $('#form-title');
+function fecharModal(id) {
+    $('#' + id).removeClass('aberto');
+    $('#modal-cadastrar-produto .modal-title').text('CADASTRAR PRODUTO');
+    $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
+    $('#cad-prod-unidade').val('');
+    $('#cad-prod-quantidade, #cad-prod-quantidade-min').val('');
+    $('#cad-prod-quantidade').removeData('estoque-id');
+    $('#modal-prod-btn').removeData('editing');
+    editingId = null;
+}
+
+function cadastrarProduto() {
+    var dados = {
+        nome: $('#cad-prod-nome').val().trim(),
+        marca: $('#cad-prod-marca').val().trim(),
+        codigo: $('#cad-prod-codigo').val().trim(),
+        unidade: $('#cad-prod-unidade').val(),
+        preco_unidade: parseFloat($('#cad-prod-preco').val()),
+    };
+
+    var quantidade = parseFloat($('#cad-prod-quantidade').val()) || 0;
+    var quantidade_min = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
+
+    if (!dados.nome || !dados.marca || !dados.codigo || !dados.preco_unidade) {
+        alert('Preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    $.ajax({
+        url: '/api/produtos',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        success: function (produto) {
+            $.ajax({
+                url: '/api/estoque',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    produto_id: produto.id,
+                    quantidade_atual: quantidade,
+                    quantidade_minima: quantidade_min
+                }),
+                success: function () {
+                    fecharModal('modal-cadastrar-produto');
+                    if (typeof window.refreshProducts === 'function') window.refreshProducts('');
+                },
+                error: function () {
+                    alert('Produto criado mas erro ao registrar estoque.');
+                }
+            });
+        },
+        error: function (xhr) {
+            alert('Erro ao cadastrar produto: ' + xhr.responseText);
+        }
+    });
+}
+
+function atualizarProduto() {
+    if (!editingId) return;
+
+    var dados = {
+        nome: $('#cad-prod-nome').val().trim(),
+        codigo: $('#cad-prod-codigo').val().trim(),
+        marca: $('#cad-prod-marca').val().trim(),
+        preco_unidade: parseFloat($('#cad-prod-preco').val()),
+        unidade: $('#cad-prod-unidade').val()
+    };
+
+    if (!dados.nome || !dados.codigo || !dados.marca || !dados.preco_unidade) {
+        alert('Preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    var qty = parseFloat($('#cad-prod-quantidade').val()) || 0;
+    var minQty = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
+    var estoqueId = $('#cad-prod-quantidade').data('estoque-id');
+
+    $.ajax({
+        url: '/api/produtos/' + editingId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        success: function () {
+            if (estoqueId) {
+                // Update existing estoque record
+                $.ajax({
+                    url: '/api/estoque/' + estoqueId,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        quantidade_atual: qty,
+                        quantidade_minima: minQty
+                    }),
+                    success: function () {
+                        fecharModal('modal-cadastrar-produto');
+                        if (typeof window.refreshProducts === 'function') window.refreshProducts('');
+                    },
+                    error: function () {
+                        alert('Produto atualizado, mas erro ao atualizar o estoque.');
+                    }
+                });
+            } else {
+                // Create new estoque record
+                $.ajax({
+                    url: '/api/estoque',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        produto_id: editingId,
+                        quantidade_atual: qty,
+                        quantidade_minima: minQty
+                    }),
+                    success: function () {
+                        fecharModal('modal-cadastrar-produto');
+                        if (typeof window.refreshProducts === 'function') window.refreshProducts('');
+                    },
+                    error: function () {
+                        alert('Produto atualizado, mas erro ao registrar estoque.');
+                    }
+                });
+            }
+        },
+        error: function (xhr) {
+            alert('Erro ao atualizar produto: ' + xhr.responseText);
+        }
+    });
+}
+
+function handleModalProdBtn() {
+    var id = $('#modal-prod-btn').data('editing');
+    if (id) {
+        editingId = id;
+        atualizarProduto();
+    } else {
+        cadastrarProduto();
+    }
+}
+
+function toggleBuscaProduto() {
+    var wrapper = document.getElementById('busca-wrapper-produto');
+    wrapper.classList.toggle('aberta');
+    if (wrapper.classList.contains('aberta')) {
+        document.getElementById('search-query').focus();
+    }
+}
+
+function gerarRelatorioEstoque() {
+    $.when(
+        $.getJSON('/api/estoque'),
+        $.getJSON('/api/produtos')
+    ).done(function (estoqueRes, produtosRes) {
+        var estoques = estoqueRes[0];
+        var produtos = produtosRes[0];
+
+        var produtoMap = {};
+        produtos.forEach(function (p) {
+            produtoMap[p.id] = p;
+        });
+
+        var baixos = estoques.filter(function (e) {
+            var min = parseFloat(e.quantidade_minima);
+            var atual = parseFloat(e.quantidade_atual);
+            return !isNaN(min) && !isNaN(atual) && atual <= min;
+        });
+
+        if (!baixos.length) {
+            alert('Nenhum produto com estoque baixo no momento.');
+            return;
+        }
+
+        var linhas = 'RELATÓRIO DE ESTOQUE BAIXO\n';
+        linhas += 'Gerado em: ' + new Date().toLocaleString('pt-BR') + '\n';
+        linhas += '='.repeat(40) + '\n\n';
+
+        baixos.forEach(function (e) {
+            var produto = produtoMap[e.produto_id];
+            linhas += 'Produto: ' + (produto ? produto.nome : 'ID ' + e.produto_id) + '\n';
+            linhas += 'Marca: ' + (produto ? produto.marca : '-') + '\n';
+            linhas += 'Quantidade atual: ' + e.quantidade_atual + '\n';
+            linhas += 'Quantidade mínima: ' + e.quantidade_minima + '\n';
+            linhas += '-'.repeat(30) + '\n';
+        });
+
+        var blob = new Blob([linhas], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'estoque_baixo_' + new Date().toISOString().slice(0, 10) + '.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }).fail(function () {
+        alert('Não foi possível carregar os dados.');
+    });
+}
+
+$(document).ready(function () {
+    var $form = $('#product-form');
+    var $feedback = $('#product-form-feedback');
+    var $formTitle = $('#form-title');
     var $searchInput = $('#search-query');
     var $productList = $('#product-list');
-    var $deleteBtn   = $('#delete-product-button');
+    var $deleteBtn = $('#delete-product-button');
 
     var fields = {
-        id:           $('#product-id'),
-        nome:         $('#product-name'),
-        codigo:       $('#product-code'),
-        marca:        $('#product-brand'),
-        preco_unidade:$('#product-price'),
-        unidade:      $('#product-unit')
+        id: $('#product-id'),
+        nome: $('#product-name'),
+        codigo: $('#product-code'),
+        marca: $('#product-brand'),
+        preco_unidade: $('#product-price'),
+        unidade: $('#product-unit')
     };
 
     /* ---------- helpers ---------- */
@@ -62,26 +261,26 @@ $(document).ready(function () {
             return '<article class="product-card" data-id="' + p.id + '">' +
                 '<div class="product-img-placeholder"><img src="/static/icones/Produto.png" alt="Produto"></div>' +
                 '<div class="product-info">' +
-                    '<span class="product-name">' + p.nome + '</span>' +
-                    '<span class="product-detail">Preço: R$ ' + Number(p.preco_unidade).toFixed(2) + '</span>' +
-                    '<span class="product-detail">Marca: ' + p.marca + '</span>' +
-                    '<span class="product-detail">Unidade: ' + p.unidade + '</span>' +
-                    '<span class="product-detail">Código: ' + p.codigo + '</span>' +
+                '<span class="product-name">' + p.nome + '</span>' +
+                '<span class="product-detail">Preço: R$ ' + Number(p.preco_unidade).toFixed(2) + '</span>' +
+                '<span class="product-detail">Marca: ' + p.marca + '</span>' +
+                '<span class="product-detail">Unidade: ' + p.unidade + '</span>' +
+                '<span class="product-detail">Código: ' + p.codigo + '</span>' +
                 '</div>' +
                 '<div class="product-actions">' +
-                    '<button class="action-btn" type="button" data-action="edit" data-id="' + p.id + '" title="Editar">' +
-                        '<img src="/static/icones/EditarSimbolo.png" alt="Editar"></button>' +
-                    '<button class="action-btn" type="button" data-action="delete" data-id="' + p.id + '" title="Excluir">' +
-                        '<img src="/static/icones/Lixosimbolo.png" alt="Excluir"></button>' +
+                '<button class="action-btn" type="button" data-action="edit" data-id="' + p.id + '" title="Editar">' +
+                '<img src="/static/icones/EditarSimbolo.png" alt="Editar"></button>' +
+                '<button class="action-btn" type="button" data-action="delete" data-id="' + p.id + '" title="Excluir">' +
+                '<img src="/static/icones/Lixosimbolo.png" alt="Excluir"></button>' +
                 '</div>' +
-            '</article>';
+                '</article>';
         }).join('');
         $productList.html(html);
     }
 
     /* ---------- AJAX ---------- */
 
-    window.refreshProducts = function(query) {
+    window.refreshProducts = function (query) {
         var url = query ? '/api/produtos/buscar?query=' + encodeURIComponent(query) : '/api/produtos';
         $.ajax({
             url: url,
@@ -100,7 +299,7 @@ $(document).ready(function () {
 
     $productList.on('click', 'button[data-action]', function () {
         var action = $(this).data('action');
-        var id     = $(this).data('id');
+        var id = $(this).data('id');
 
         if (action === 'delete') {
             if (!window.confirm('Deseja excluir este produto?')) return;
@@ -119,7 +318,7 @@ $(document).ready(function () {
         if (action === 'edit') {
             $.getJSON('/api/produtos/' + id, function (produto) {
                 $.getJSON('/api/estoque', function (estoques) {
-                    var estoque = estoques.find(function(e) { return e.produto_id === produto.id; });
+                    var estoque = estoques.find(function (e) { return e.produto_id === produto.id; });
                     fillForm(produto, estoque);
                     abrirModal('modal-cadastrar-produto');
                 });
@@ -134,206 +333,3 @@ $(document).ready(function () {
     $deleteBtn.hide();
     refreshProducts('');
 });
-
-/* ===== funções globais ===== */
-
-
-function abrirModal(id) {
-    $('#' + id).addClass('aberto');
-}
-
-function fecharModal(id) {
-    $('#' + id).removeClass('aberto');
-    $('#modal-cadastrar-produto .modal-title').text('CADASTRAR PRODUTO');
-    $('#cad-prod-nome, #cad-prod-codigo, #cad-prod-marca, #cad-prod-preco').val('');
-    $('#cad-prod-unidade').val('');
-    $('#cad-prod-quantidade, #cad-prod-quantidade-min').val('');
-    $('#cad-prod-quantidade').removeData('estoque-id');
-    $('#modal-prod-btn').removeData('editing');
-    editingId = null;
-}
-
-function cadastrarProduto() {
-    var dados = {
-        nome:          $('#cad-prod-nome').val().trim(),
-        marca:         $('#cad-prod-marca').val().trim(),
-        codigo:        $('#cad-prod-codigo').val().trim(),
-        unidade:       $('#cad-prod-unidade').val(),
-        preco_unidade: parseFloat($('#cad-prod-preco').val()),
-    };
-
-    var quantidade     = parseFloat($('#cad-prod-quantidade').val()) || 0;
-    var quantidade_min = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
-
-    if (!dados.nome || !dados.marca || !dados.codigo || !dados.preco_unidade) {
-        alert('Preencha todos os campos obrigatórios.');
-        return;
-    }
-
-    $.ajax({
-        url: '/api/produtos',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(dados),
-        success: function (produto) {
-            $.ajax({
-                url: '/api/estoque',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    produto_id: produto.id,
-                    quantidade_atual: quantidade,
-                    quantidade_minima: quantidade_min
-                }),
-                success: function () {
-                    fecharModal('modal-cadastrar-produto');
-                    refreshProducts('');
-                },
-                error: function () {
-                    alert('Produto criado mas erro ao registrar estoque.');
-                }
-            });
-        },
-        error: function (xhr) {
-            alert('Erro ao cadastrar produto: ' + xhr.responseText);
-        }
-    });
-}
-
-function atualizarProduto() {
-    if (!editingId) return;
-
-    var dados = {
-        nome:          $('#cad-prod-nome').val().trim(),
-        codigo:        $('#cad-prod-codigo').val().trim(),
-        marca:         $('#cad-prod-marca').val().trim(),
-        preco_unidade: parseFloat($('#cad-prod-preco').val()),
-        unidade:       $('#cad-prod-unidade').val()
-    };
-
-    if (!dados.nome || !dados.codigo || !dados.marca || !dados.preco_unidade) {
-        alert('Preencha todos os campos obrigatórios.');
-        return;
-    }
-
-    var qty = parseFloat($('#cad-prod-quantidade').val()) || 0;
-    var minQty = parseFloat($('#cad-prod-quantidade-min').val()) || 0;
-    var estoqueId = $('#cad-prod-quantidade').data('estoque-id');
-
-    $.ajax({
-        url: '/api/produtos/' + editingId,
-        method: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(dados),
-        success: function () {
-            if (estoqueId) {
-                // Update existing estoque record
-                $.ajax({
-                    url: '/api/estoque/' + estoqueId,
-                    method: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        quantidade_atual: qty,
-                        quantidade_minima: minQty
-                    }),
-                    success: function() {
-                        fecharModal('modal-cadastrar-produto');
-                        refreshProducts('');
-                    },
-                    error: function() {
-                        alert('Produto atualizado, mas erro ao atualizar o estoque.');
-                    }
-                });
-            } else {
-                // Create new estoque record
-                $.ajax({
-                    url: '/api/estoque',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        produto_id: editingId,
-                        quantidade_atual: qty,
-                        quantidade_minima: minQty
-                    }),
-                    success: function() {
-                        fecharModal('modal-cadastrar-produto');
-                        refreshProducts('');
-                    },
-                    error: function() {
-                        alert('Produto atualizado, mas erro ao registrar estoque.');
-                    }
-                });
-            }
-        },
-        error: function (xhr) {
-            alert('Erro ao atualizar produto: ' + xhr.responseText);
-        }
-    });
-}
-
-function toggleBuscaProduto() {
-    var wrapper = document.getElementById('busca-wrapper-produto');
-    wrapper.classList.toggle('aberta');
-    if (wrapper.classList.contains('aberta')) {
-        document.getElementById('search-query').focus();
-    }
-}
-
-function gerarRelatorioEstoque() {
-    $.when(
-        $.getJSON('/api/estoque'),
-        $.getJSON('/api/produtos')
-    ).done(function(estoqueRes, produtosRes) {
-        var estoques  = estoqueRes[0];
-        var produtos  = produtosRes[0];
-
-        var produtoMap = {};
-        produtos.forEach(function(p) {
-            produtoMap[p.id] = p;
-        });
-
-        var baixos = estoques.filter(function(e) {
-            var min = parseFloat(e.quantidade_minima);
-            var atual = parseFloat(e.quantidade_atual);
-            return !isNaN(min) && !isNaN(atual) && atual <= min;
-        });
-
-        if (!baixos.length) {
-            alert('Nenhum produto com estoque baixo no momento.');
-            return;
-        }
-
-        var linhas = 'RELATÓRIO DE ESTOQUE BAIXO\n';
-        linhas += 'Gerado em: ' + new Date().toLocaleString('pt-BR') + '\n';
-        linhas += '='.repeat(40) + '\n\n';
-
-        baixos.forEach(function(e) {
-            var produto = produtoMap[e.produto_id];
-            linhas += 'Produto: ' + (produto ? produto.nome : 'ID ' + e.produto_id) + '\n';
-            linhas += 'Marca: ' + (produto ? produto.marca : '-') + '\n';
-            linhas += 'Quantidade atual: ' + e.quantidade_atual + '\n';
-            linhas += 'Quantidade mínima: ' + e.quantidade_minima + '\n';
-            linhas += '-'.repeat(30) + '\n';
-        });
-
-        var blob = new Blob([linhas], { type: 'text/plain;charset=utf-8' });
-        var url  = URL.createObjectURL(blob);
-        var a    = document.createElement('a');
-        a.href     = url;
-        a.download = 'estoque_baixo_' + new Date().toISOString().slice(0,10) + '.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-    }).fail(function() {
-        alert('Não foi possível carregar os dados.');
-    });
-}
-
-function handleModalProdBtn() {
-    var id = $('#modal-prod-btn').data('editing');
-    if (id) {
-        editingId = id;
-        atualizarProduto();
-    } else {
-        cadastrarProduto();
-    }
-}

@@ -2,7 +2,7 @@
 {% block title %}Produtos / Estoque{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="/static/produto/style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='produto/style.css') }}?v=3">
 {% endblock %}
 
 {% block content %}
@@ -84,7 +84,7 @@
             </section>
 
             <div class="busca-wrapper" id="busca-wrapper-produto">
-                <input id="search-query" class="product-search" type="search" placeholder="Buscar por nome ou código";>
+                <input id="search-query" class="product-search" type="search" placeholder="Buscar por nome ou código">
             </div>
 
             <section>
@@ -139,5 +139,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/produto/script.js" defer></script>
+<script src="{{ url_for('static', filename='produto/script.js') }}?v=3" defer></script>
 {% endblock %}

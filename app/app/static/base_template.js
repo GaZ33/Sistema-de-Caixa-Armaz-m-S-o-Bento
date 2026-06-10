@@ -160,12 +160,18 @@ function triggerAction(action) {
     } else if (action === "cadastrar-produto") {
         abrirModal('modal-cadastrar-produto');
     } else if (action === "procurar-produto") {
+        console.log("triggerAction: procurar-produto. typeof toggleBuscaProduto =", typeof toggleBuscaProduto);
         if (typeof toggleBuscaProduto === 'function') {
             toggleBuscaProduto();
+        } else {
+            console.error("toggleBuscaProduto is not a function!");
         }
     } else if (action === "estoque-baixo") {
+        console.log("triggerAction: estoque-baixo. typeof gerarRelatorioEstoque =", typeof gerarRelatorioEstoque);
         if (typeof gerarRelatorioEstoque === 'function') {
             gerarRelatorioEstoque();
+        } else {
+            console.error("gerarRelatorioEstoque is not a function!");
         }
     }
 }
